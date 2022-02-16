@@ -1,13 +1,11 @@
 <template>
 	<LayoutDefault>
-		<LoaderCircle v-if="isLoading" :is-loading="isLoading" />
-
 		<div
-			v-else
 			class="flex flex-col justify-between h-1/2 gap-4 md:flex-row my-4 mx-4"
 		>
-			<div class="w-full h-full bg-gray-500 md:w-4/6">
-				<div class="h-full">
+			<div class="w-full h-full bg-gray-800 md:w-4/6">
+				<LoaderCircle v-if="isLoading" :is-loading="isLoading" />
+				<div v-else class="h-full">
 					<iframe
 						class="w-full h-full"
 						:src="openVideo(dataMainVideos)"
@@ -19,16 +17,18 @@
 			</div>
 
 			<div class="bg-white dark:bg-gray-600 shadow overflow-auto md:w-2/6">
-				<div class="bg-gray-200 dark:bg-gray-800 text-center text-lg p-2">
+				<div class="bg-gray-300 dark:bg-gray-800 text-center text-lg p-2">
 					Video Lainnya
 				</div>
-				<button
+				<div
 					v-for="(item, index) in dataVideos[0]"
 					:key="`list videos ${index}`"
-					@click="changeMainVideo(item)"
+					@click="changeMainVideo(item, index)"
+					class="cursor-pointer"
+					:class="{ 'bg-gray-100 dark:bg-gray-500': index === indexMainVideos }"
 				>
 					<div class="flex justify-between gap-2 p-2 h-24">
-						<div class="w-1/2 h-16">
+						<div class="md:w-1/2 lg:w-1/3 h-full">
 							<div class="h-full">
 								<img
 									v-lazy="thumbnailImageVideo(...dataMovie)"
@@ -36,11 +36,11 @@
 								/>
 							</div>
 						</div>
-						<div class="w-full h-full line-clamp-2">
+						<div class="w-full md:w-1/2 lg:w-2/3 h-full line-clamp-2">
 							{{ item.name }}
 						</div>
 					</div>
-				</button>
+				</div>
 			</div>
 		</div>
 	</LayoutDefault>
@@ -71,6 +71,7 @@ export default {
 	setup(props) {
 		const isLoading = ref(false);
 		const dataMainVideos = ref({});
+		const indexMainVideos = ref(0);
 		const dataVideos = reactive([]);
 		const dataMovie = reactive([]);
 		const route = useRoute();
@@ -87,8 +88,14 @@ export default {
 			}
 		};
 
-		const changeMainVideo = (data) => {
-			console.log(data)
+		const changeMainVideo = (data, index) => {
+			isLoading.value = true;
+			dataMainVideos.value = {};
+			dataMainVideos.value = data;
+			indexMainVideos.value = index;
+			setTimeout(() => {
+				isLoading.value = false;
+			}, 2000);
 		};
 
 		const getDetailMovie = () => {
@@ -100,7 +107,7 @@ export default {
 			api()
 				.movie.getDetailMovie(params)
 				.then(({ data }) => {
-					console.log("data movie = ", data);
+					// console.log("data movie = ", data);
 					dataMovie.push(data);
 				})
 				.catch((error) => {
@@ -117,7 +124,7 @@ export default {
 			api()
 				.movie.getVideosFromMovie(params)
 				.then(({ data: { results } }) => {
-					console.log("data videos movie = ", results);
+					// console.log("data videos movie = ", results);
 					dataMainVideos.value = results[0];
 					dataVideos.push(results);
 				})
@@ -171,12 +178,12 @@ export default {
 		/*                                 watchEffecter                                    */
 		/* -------------------------------------------------------------------------- */
 		// eslint-disable-next-line no-undef
-		watchEffect(() => console.log(imageUrls));
+		// watchEffect(() => console.log(dataMainVideos.value));
 		/* -------------------------------------------------------------------------- */
 		/*                                 lifecycle                                  */
 		/* -------------------------------------------------------------------------- */
 		onMounted(() => {
-			console.log("query route = ", route.query);
+			// console.log("query route = ", route.query);
 			loadAllApi();
 			generateImageUrls();
 		});
@@ -191,6 +198,7 @@ export default {
 		return {
 			isLoading,
 			dataMainVideos,
+			indexMainVideos,
 			dataVideos,
 			dataMovie,
 			...toRefs(props),

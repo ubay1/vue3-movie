@@ -21,6 +21,9 @@ const router = createRouter({
 			path: "/detail",
 			name: "detail",
 			component: () => import("../views/detail/Detail.vue"),
+			meta: {
+				reload: true,
+			},
 		},
 	],
 });

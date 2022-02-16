@@ -1,10 +1,10 @@
 <template>
-	<div>
+	<div class="flex items-center justify-center h-full">
 		<img
 			v-if="isLoading"
 			src="@/assets/images/loader.gif"
 			alt=""
-			class="w-10 m-auto mt-4"
+			class="w-10"
 		/>
 	</div>
 </template>

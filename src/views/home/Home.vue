@@ -2,7 +2,7 @@
 	<LayoutDefault>
 		<div class="px-2 sm:px-6 lg:px-8">
 			<!-- loader -->
-			<LoaderCircle v-if="isLoading" :is-loading="isLoading" />
+			<LoaderCircle v-if="isLoading" :is-loading="isLoading" class="mt-10" />
 
 			<div v-else>
 				<!-- genres -->
@@ -73,8 +73,7 @@ import { onBeforeMount, onMounted, onUnmounted, reactive, ref } from "vue";
 import LayoutDefault from "@/layouts/Default.vue";
 import LoaderCircle from "@/components/atoms/loader/LoaderCircle.vue";
 import Api from "@/apis";
-import router from "../../router";
-// import router from '../../router';
+// import router from "../../router";
 
 export default {
 	components: {
@@ -132,12 +131,13 @@ export default {
 
 		const detailMovie = (item) => {
 			console.log(item.poster_path);
-			router.push({
-				path: "/detail",
-				query: {
-					id: item.id,
-				},
-			});
+			location.replace(`/detail?id=${item.id}`);
+			// router.replace({
+			// 	path: "/detail",
+			// 	query: {
+			// 		id: item.id,
+			// 	},
+			// });
 		};
 
 		const posterMovie = (poster_path) => {
