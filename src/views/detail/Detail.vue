@@ -141,7 +141,7 @@ export default {
 			api()
 				.movie.getDetailMovie(params)
 				.then(({ data }) => {
-					console.log("data movie = ", data);
+					// console.log("data movie = ", data);
 					dataMovie.push(data);
 				})
 				.catch((error) => {
@@ -159,8 +159,10 @@ export default {
 				.movie.getVideosFromMovie(params)
 				.then(({ data: { results } }) => {
 					// console.log("data videos movie = ", results);
-					dataMainVideos.value = results[0];
-					dataVideos.push(results);
+					if (results.length !== 0) {
+						dataMainVideos.value = results[0];
+						dataVideos.push(results);
+					}
 				})
 				.catch((error) => {
 					console.error(error);
