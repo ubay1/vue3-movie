@@ -1,7 +1,6 @@
 <template>
 	<div
-		id="layout-default"
-		class="h-screen min-h-full bg-white text-gray-800 dark:bg-gray-700 dark:text-white"
+		class="h-full min-h-screen bg-white text-gray-800 dark:bg-gray-700 dark:text-white"
 	>
 		<Navbar />
 		<slot></slot>
@@ -10,7 +9,7 @@
 
 <script>
 import { provide, reactive } from "vue";
-import Navbar from "@/components/molecules/Navbar.vue";
+import Navbar from "@/components/organisms/Navbar.vue";
 
 export default {
 	components: {
