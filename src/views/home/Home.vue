@@ -73,7 +73,7 @@ import { onBeforeMount, onMounted, onUnmounted, reactive, ref } from "vue";
 import LayoutDefault from "@/layouts/Default.vue";
 import LoaderCircle from "@/components/atoms/loader/LoaderCircle.vue";
 import Api from "@/apis";
-import router from "../../router";
+import { useRouter } from "vue-router";
 
 export default {
 	components: {
@@ -82,6 +82,7 @@ export default {
 	},
 	setup() {
 		const isLoading = ref(false);
+		const router = useRouter();
 
 		const listGenre = reactive([]);
 		const listPopularMovie = reactive([]);
