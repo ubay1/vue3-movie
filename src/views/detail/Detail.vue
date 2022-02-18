@@ -1,45 +1,79 @@
 <template>
 	<LayoutDefault>
-		<div
-			class="flex flex-col justify-between h-1/2 gap-4 md:flex-row my-4 mx-4"
-		>
-			<div class="w-full h-full bg-gray-800 md:w-4/6">
-				<LoaderCircle v-if="isLoading" :is-loading="isLoading" />
-				<div v-else class="h-full">
-					<iframe
-						class="w-full h-full"
-						:src="openVideo(dataMainVideos)"
-						frameborder="0"
-						allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-						allowfullscreen
-					></iframe>
+		<div class="flex flex-col justify-between gap-4 m-4 md:h-1/2">
+			<div class="flex flex-col justify-between gap-4 md:flex-row">
+				<!-- video utama -->
+				<div
+					class="w-full h-80 bg-gray-300 dark:bg-gray-800 md:w-4/6 md:h-80 lg:h-80"
+				>
+					<LoaderCircle v-if="isLoading" :is-loading="isLoading" />
+					<div v-else class="h-full">
+						<div
+							v-if="Object.keys(dataMainVideos).length === 0"
+							class="w-full h-full flex justify-center items-center"
+						></div>
+						<iframe
+							v-else
+							class="w-full h-full"
+							:src="openVideo(dataMainVideos)"
+							frameborder="0"
+							allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+							allowfullscreen
+						></iframe>
+					</div>
+				</div>
+
+				<!-- video lainnya -->
+				<div
+					class="bg-white dark:bg-gray-600 shadow overflow-auto h-72 md:h-80 md:w-2/6 lg:h-80"
+				>
+					<div class="bg-gray-300 dark:bg-gray-800 text-center text-lg p-2">
+						Video Lainnya
+					</div>
+					<div
+						v-if="dataVideos.length === 0"
+						class="mt-5 flex justify-center items-center"
+					>
+						list video tidak ditemukan
+					</div>
+					<div v-else class="p-2">
+						<div
+							v-for="(item, index) in dataVideos[0]"
+							:key="`list videos ${index}`"
+							@click="changeMainVideo(item, index)"
+							class="cursor-pointer"
+							:class="{
+								'bg-gray-100 dark:bg-gray-700': index === indexMainVideos,
+							}"
+						>
+							<div class="flex justify-between gap-2 p-2 h-24">
+								<div class="w-1/2 sm:w-1/4 md:w-1/2 lg:w-1/3 h-full">
+									<div class="h-full">
+										<img
+											v-lazy="thumbnailImageVideo()"
+											class="placeholder bg-gray-100 img-lazy w-full h-full object-cover object-top"
+										/>
+									</div>
+								</div>
+								<div class="w-full md:w-1/2 lg:w-2/3 h-full line-clamp-2">
+									{{ item.name }}
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 
-			<div class="bg-white dark:bg-gray-600 shadow overflow-auto md:w-2/6">
-				<div class="bg-gray-300 dark:bg-gray-800 text-center text-lg p-2">
-					Video Lainnya
-				</div>
-				<div
-					v-for="(item, index) in dataVideos[0]"
-					:key="`list videos ${index}`"
-					@click="changeMainVideo(item, index)"
-					class="cursor-pointer"
-					:class="{ 'bg-gray-100 dark:bg-gray-500': index === indexMainVideos }"
-				>
-					<div class="flex justify-between gap-2 p-2 h-24">
-						<div class="md:w-1/2 lg:w-1/3 h-full">
-							<div class="h-full">
-								<img
-									v-lazy="thumbnailImageVideo(...dataMovie)"
-									class="placeholder bg-gray-100 img-lazy w-full h-full object-cover object-top"
-								/>
-							</div>
-						</div>
-						<div class="w-full md:w-1/2 lg:w-2/3 h-full line-clamp-2">
-							{{ item.name }}
-						</div>
-					</div>
+			<div class="my-3">
+				<hr />
+				<div class="mt-3 mb-10">
+					Lorem, ipsum dolor sit amet consectetur adipisicing elit. Esse iste
+					alias repellendus temporibus sint repellat dolor consectetur corporis
+					minus! Eum quo qui rem nostrum dolore hic. Ullam, quo! Ex, saepe?
+					Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
+					esse nam adipisci. Neque pariatur ipsam praesentium corrupti quos
+					consequatur, doloremque eligendi minus ducimus. Consectetur expedita
+					quos ut nemo. At, rem?
 				</div>
 			</div>
 		</div>
@@ -72,10 +106,10 @@ export default {
 		const isLoading = ref(false);
 		const dataMainVideos = ref({});
 		const indexMainVideos = ref(0);
+		const imageMovie = ref(null);
 		const dataVideos = reactive([]);
 		const dataMovie = reactive([]);
 		const route = useRoute();
-		const imageUrls = reactive([]);
 
 		/* -------------------------------------------------------------------------- */
 		/*                                   method                                   */
@@ -107,7 +141,7 @@ export default {
 			api()
 				.movie.getDetailMovie(params)
 				.then(({ data }) => {
-					// console.log("data movie = ", data);
+					console.log("data movie = ", data);
 					dataMovie.push(data);
 				})
 				.catch((error) => {
@@ -144,29 +178,12 @@ export default {
 				.finally(() => (isLoading.value = false));
 		};
 
-		const thumbnailImageVideo = (data) => {
-			if (![null, "", undefined].includes(data)) {
+		const thumbnailImageVideo = () => {
+			if (![null, "", undefined].includes(imageMovie.value)) {
 				return `${import.meta.env.VITE_POSTER_IMAGE_URL}w300${
-					data.backdrop_path
+					imageMovie.value
 				}`;
 			}
-		};
-
-		const generateImageUrls = (start = 0, length = 10) => {
-			const a = Array.from(
-				new Array(length),
-				(x, i) => `https://picsum.photos/400/400?image=${i + start}`
-			);
-
-			if (start !== 0) {
-				imageUrls[0].push(...a);
-			} else {
-				imageUrls.push(a);
-			}
-		};
-
-		const addNewImages = () => {
-			generateImageUrls(imageUrls[0].length);
 		};
 		/* -------------------------------------------------------------------------- */
 		/*                                 computed                                   */
@@ -184,8 +201,8 @@ export default {
 		/* -------------------------------------------------------------------------- */
 		onMounted(() => {
 			// console.log("query route = ", route.query);
+			imageMovie.value = route.query.image;
 			loadAllApi();
-			generateImageUrls();
 		});
 
 		const api = () => {
@@ -205,8 +222,7 @@ export default {
 			openVideo,
 			changeMainVideo,
 			thumbnailImageVideo,
-			imageUrls,
-			addNewImages,
+			imageMovie,
 		};
 	},
 };
