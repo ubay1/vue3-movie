@@ -73,7 +73,7 @@ import { onBeforeMount, onMounted, onUnmounted, reactive, ref } from "vue";
 import LayoutDefault from "@/layouts/Default.vue";
 import LoaderCircle from "@/components/atoms/loader/LoaderCircle.vue";
 import Api from "@/apis";
-// import router from "../../router";
+import router from "../../router";
 
 export default {
 	components: {
@@ -130,14 +130,15 @@ export default {
 		};
 
 		const detailMovie = (item) => {
-			console.log(item.poster_path);
-			location.replace(`/detail?id=${item.id}`);
-			// router.replace({
-			// 	path: "/detail",
-			// 	query: {
-			// 		id: item.id,
-			// 	},
-			// });
+			// console.log(item.poster_path);
+			// location.replace(`/detail?id=${item.id}&image=${item.backdrop_path}`);
+			router.replace({
+				path: "/detail",
+				query: {
+					id: item.id,
+					image: item.backdrop_path,
+				},
+			});
 		};
 
 		const posterMovie = (poster_path) => {

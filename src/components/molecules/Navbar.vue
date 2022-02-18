@@ -26,13 +26,13 @@
 				<!-- btn mode -->
 				<div class="absolute z-10 inset-y-0 right-0 flex items-center">
 					<button
-						id="theme-toggle"
 						type="button"
 						class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none rounded-lg text-sm p-2"
+						@click="toggleModes"
 					>
 						<svg
-							id="theme-toggle-dark-icon"
-							class="w-7 h-7 hidden"
+							v-if="settings.theme === 'light'"
+							class="w-7 h-7"
 							fill="currentColor"
 							viewBox="0 0 20 20"
 							xmlns="http://www.w3.org/2000/svg"
@@ -42,8 +42,8 @@
 							></path>
 						</svg>
 						<svg
-							id="theme-toggle-light-icon"
-							class="w-7 h-7 hidden"
+							v-else
+							class="w-7 h-7"
 							fill="currentColor"
 							viewBox="0 0 20 20"
 							xmlns="http://www.w3.org/2000/svg"
@@ -62,7 +62,7 @@
 </template>
 
 <script>
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, inject } from "vue";
 import IconMenu from "@/assets/images/menu.png";
 import IconMenuDark from "@/assets/images/menu-dark.png";
 import IconClose from "@/assets/images/close.png";
@@ -78,60 +78,33 @@ export default {
 		/* -------------------------------------------------------------------------- */
 		const isDarkMode = ref(false);
 
+		const settings = inject("settingsTheme");
+
+		const siteTheme = computed(() => {
+			return settings.theme === "dark" ? "light" : "dark";
+		});
+
+		const toggleModes = () => {
+			if (siteTheme.value === "dark") {
+				document.documentElement.classList.add("dark");
+			} else {
+				document.documentElement.classList.remove("dark");
+			}
+			localStorage.setItem("color-theme", siteTheme.value);
+			settings.theme = siteTheme.value;
+		};
+
 		/* -------------------------------------------------------------------------- */
 		/*                                   method                                   */
 		/* -------------------------------------------------------------------------- */
-		const toggleMode = () => {
-			const themeToggleDarkIcon = document.getElementById(
-				"theme-toggle-dark-icon"
-			);
-			const themeToggleLightIcon = document.getElementById(
-				"theme-toggle-light-icon"
-			);
-
-			// Change the icons inside the button based on previous settings
+		const cekColorThemeFromLocalStorage = () => {
 			if (localStorage.getItem("color-theme") === "dark") {
-				isDarkMode.value = true;
+				settings.theme = "dark";
 				document.documentElement.classList.add("dark");
-				themeToggleLightIcon.classList.remove("hidden");
 			} else {
-				isDarkMode.value = false;
+				settings.theme = "light";
 				document.documentElement.classList.remove("dark");
-				themeToggleDarkIcon.classList.remove("hidden");
 			}
-
-			const themeToggleBtn = document.getElementById("theme-toggle");
-
-			themeToggleBtn.addEventListener("click", function () {
-				// toggle icons inside button
-				themeToggleDarkIcon.classList.toggle("hidden");
-				themeToggleLightIcon.classList.toggle("hidden");
-
-				// if set via local storage previously
-				if (localStorage.getItem("color-theme")) {
-					if (localStorage.getItem("color-theme") === "light") {
-						isDarkMode.value = true;
-						document.documentElement.classList.add("dark");
-						localStorage.setItem("color-theme", "dark");
-					} else {
-						isDarkMode.value = false;
-						document.documentElement.classList.remove("dark");
-						localStorage.setItem("color-theme", "light");
-					}
-
-					// if NOT set via local storage previously
-				} else {
-					if (document.documentElement.classList.contains("dark")) {
-						isDarkMode.value = false;
-						document.documentElement.classList.remove("dark");
-						localStorage.setItem("color-theme", "light");
-					} else {
-						isDarkMode.value = true;
-						document.documentElement.classList.add("dark");
-						localStorage.setItem("color-theme", "dark");
-					}
-				}
-			});
 		};
 
 		const backToHome = () => {
@@ -154,7 +127,7 @@ export default {
 		/*                                  lifecycle                                 */
 		/* -------------------------------------------------------------------------- */
 		onMounted(() => {
-			toggleMode();
+			cekColorThemeFromLocalStorage();
 		});
 
 		/* -------------------------------------------------------------------------- */
@@ -171,6 +144,8 @@ export default {
 			checkIconClose,
 			checkIconMenu,
 			checkIconSearch,
+			settings,
+			toggleModes,
 		};
 	},
 };

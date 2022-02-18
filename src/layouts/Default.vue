@@ -9,13 +9,19 @@
 </template>
 
 <script>
-// import { onMounted, ref } from 'vue';
+import { provide, reactive } from "vue";
 import Navbar from "@/components/molecules/Navbar.vue";
 
 export default {
 	components: {
 		Navbar,
 	},
-	setup() {},
+	setup() {
+		const theme = reactive({
+			theme: "light",
+		});
+
+		provide("settingsTheme", theme);
+	},
 };
 </script>
