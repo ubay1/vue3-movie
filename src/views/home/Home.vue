@@ -92,15 +92,7 @@ export default {
 				language: "en-US",
 			};
 
-			api()
-				.movie.getListGenre(params)
-				.then(({ data: { genres } }) => {
-					// console.log(genres));
-					listGenre.push(genres);
-				})
-				.catch((error) => {
-					console.error(error);
-				});
+			return api().movie.getListGenre(params);
 		};
 
 		const loadListPopulerMovie = () => {
@@ -109,22 +101,23 @@ export default {
 				page: 1,
 			};
 
-			api()
-				.movie.getListPopulerMovie(params)
-				.then(({ data: { results } }) => {
-					listPopularMovie.push(results);
-				})
-				.catch((error) => {
-					console.error(error);
-				});
+			return api().movie.getListPopulerMovie(params);
 		};
 
 		const loadAllData = () => {
 			isLoading.value = true;
+
 			Promise.all([loadListGenre(), loadListPopulerMovie()])
-				// eslint-disable-next-line no-unused-vars
-				.then((result) => {
-					// console.log(result);
+				.then(([listGenres, listPopulerMovie]) => {
+					const {
+						data: { genres },
+					} = listGenres;
+					listGenre.push(genres);
+
+					const {
+						data: { results },
+					} = listPopulerMovie;
+					listPopularMovie.push(results);
 				})
 				.catch((error) => console.log(error))
 				.finally(() => (isLoading.value = false));
