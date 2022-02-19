@@ -4,7 +4,7 @@
 			<div class="flex flex-col justify-between gap-4 md:flex-row">
 				<!-- video utama -->
 				<div
-					class="w-full h-80 bg-gray-300 dark:bg-gray-800 md:w-4/6 md:h-80 lg:h-80"
+					class="w-full h-80 bg-gray-300 dark:bg-gray-800 md:w-4/6 md:h-80 lg:h-96"
 				>
 					<LoaderCircle v-if="isLoading" :is-loading="isLoading" />
 					<div v-else class="h-full">
@@ -25,38 +25,44 @@
 
 				<!-- video lainnya -->
 				<div
-					class="bg-white dark:bg-gray-600 shadow overflow-auto h-72 md:h-80 md:w-2/6 lg:h-80"
+					class="bg-white dark:bg-gray-600 shadow overflow-auto h-72 md:h-80 md:w-2/6 lg:h-96"
 				>
 					<div class="bg-gray-300 dark:bg-gray-800 text-center text-lg p-2">
 						Video Lainnya
 					</div>
-					<div
-						v-if="dataVideos.length === 0"
-						class="mt-5 flex justify-center items-center"
-					>
-						list video tidak ditemukan
-					</div>
-					<div v-else class="p-2">
+					<LoaderCircle
+						v-if="isLoadingListVideo"
+						:is-loading="isLoadingListVideo"
+					/>
+					<div v-else>
 						<div
-							v-for="(item, index) in dataVideos[0]"
-							:key="`list videos ${index}`"
-							@click="changeMainVideo(item, index)"
-							class="cursor-pointer"
-							:class="{
-								'bg-gray-100 dark:bg-gray-700': index === indexMainVideos,
-							}"
+							v-if="dataVideos.length === 0"
+							class="mt-5 flex justify-center items-center"
 						>
-							<div class="flex justify-between gap-2 p-2 h-24">
-								<div class="w-1/2 sm:w-1/4 md:w-1/2 lg:w-1/3 h-full">
-									<div class="h-full">
-										<img
-											v-lazy="thumbnailImageVideo()"
-											class="placeholder bg-gray-100 img-lazy w-full h-full object-cover object-top"
-										/>
+							list video tidak ditemukan
+						</div>
+						<div v-else class="p-2">
+							<div
+								v-for="(item, index) in dataVideos[0]"
+								:key="`list videos ${index}`"
+								@click="changeMainVideo(item, index)"
+								class="cursor-pointer"
+								:class="{
+									'bg-gray-100 dark:bg-gray-700': index === indexMainVideos,
+								}"
+							>
+								<div class="flex justify-between gap-2 p-2 h-24">
+									<div class="w-1/2 sm:w-1/4 md:w-1/2 lg:w-1/3 h-full">
+										<div class="h-full">
+											<img
+												v-lazy="thumbnailImageVideo()"
+												class="placeholder bg-gray-100 img-lazy w-full h-full object-cover object-top"
+											/>
+										</div>
 									</div>
-								</div>
-								<div class="w-full md:w-1/2 lg:w-2/3 h-full line-clamp-2">
-									{{ item.name }}
+									<div class="w-full md:w-1/2 lg:w-2/3 h-full line-clamp-2">
+										{{ item.name }}
+									</div>
 								</div>
 							</div>
 						</div>
@@ -83,11 +89,12 @@
 
 <script>
 // eslint-disable-next-line no-unused-vars
-import { ref, reactive, toRefs, onMounted, watchEffect } from "vue";
+import { ref, reactive, toRefs, onMounted, watch } from "vue";
 import { useRoute } from "vue-router";
 import LayoutDefault from "@/layouts/Default.vue";
 import LoaderCircle from "@/components/atoms/loader/LoaderCircle.vue";
 import Api from "@/apis";
+// import axios from "axios";
 
 export default {
 	components: {
@@ -104,6 +111,7 @@ export default {
 	},
 	setup(props) {
 		const isLoading = ref(false);
+		const isLoadingListVideo = ref(false);
 		const dataMainVideos = ref({});
 		const indexMainVideos = ref(0);
 		const imageMovie = ref(null);
@@ -138,15 +146,7 @@ export default {
 				movieId: route.query.id,
 			};
 
-			api()
-				.movie.getDetailMovie(params)
-				.then(({ data }) => {
-					// console.log("data movie = ", data);
-					dataMovie.push(data);
-				})
-				.catch((error) => {
-					console.error(error);
-				});
+			return api().movie.getDetailMovie(params);
 		};
 
 		const getVideos = () => {
@@ -155,29 +155,32 @@ export default {
 				movieId: route.query.id,
 			};
 
-			api()
-				.movie.getVideosFromMovie(params)
-				.then(({ data: { results } }) => {
-					// console.log("data videos movie = ", results);
+			return api().movie.getVideosFromMovie(params);
+		};
+
+		const loadAllApi = () => {
+			isLoading.value = true;
+			isLoadingListVideo.value = true;
+
+			Promise.all([getDetailMovie(), getVideos()])
+				.then(([detailMovie, videos]) => {
+					const { data } = detailMovie;
+					dataMovie.push(data);
+
+					const {
+						data: { results },
+					} = videos;
+
 					if (results.length !== 0) {
 						dataMainVideos.value = results[0];
 						dataVideos.push(results);
 					}
 				})
-				.catch((error) => {
-					console.error(error);
-				});
-		};
-
-		const loadAllApi = () => {
-			isLoading.value = true;
-			Promise.all([getDetailMovie(), getVideos()])
-				// eslint-disable-next-line no-unused-vars
-				.then((result) => {
-					// console.log(result);
-				})
 				.catch((error) => console.log(error))
-				.finally(() => (isLoading.value = false));
+				.finally(() => {
+					isLoading.value = false;
+					isLoadingListVideo.value = false;
+				});
 		};
 
 		const thumbnailImageVideo = () => {
@@ -197,7 +200,7 @@ export default {
 		/*                                 watchEffecter                                    */
 		/* -------------------------------------------------------------------------- */
 		// eslint-disable-next-line no-undef
-		// watchEffect(() => console.log(dataMainVideos.value));
+		watch(isLoadingListVideo, (video) => console.log(video));
 		/* -------------------------------------------------------------------------- */
 		/*                                 lifecycle                                  */
 		/* -------------------------------------------------------------------------- */
@@ -205,6 +208,7 @@ export default {
 			// console.log("query route = ", route.query);
 			imageMovie.value = route.query.image;
 			loadAllApi();
+			// loadAllEndpoint();
 		});
 
 		const api = () => {
@@ -216,6 +220,7 @@ export default {
 
 		return {
 			isLoading,
+			isLoadingListVideo,
 			dataMainVideos,
 			indexMainVideos,
 			dataVideos,
