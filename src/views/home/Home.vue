@@ -4,7 +4,7 @@
 			<!-- loader -->
 			<LoaderCircle v-if="isLoading" :is-loading="isLoading" class="mt-10" />
 
-			<div v-else>
+			<div v-else class="flex flex-col">
 				<!-- genres -->
 				<div class="flex justify-center items-center my-4">
 					<div class="flex overflow-x-auto">
@@ -22,7 +22,7 @@
 				</div>
 
 				<!-- popular movie -->
-				<div class="mt-8">
+				<div class="mb-8">
 					<div class="flex justify-between items-center">
 						<div class="font-extrabold text-xl">Film Terpopuler</div>
 						<button
@@ -46,22 +46,42 @@
 								<div class="title-movie rounded-md">
 									{{ item.original_title }}
 								</div>
-								<!-- <div class="overlay">
-									<button
-										class="bg-green-400 hover:bg-green-500 text-sm p-2 w-4/5 capitalize rounded-md mb-2"
-									>
-										detail movie
-									</button>
-									<button
-										class="bg-red-400 hover:bg-red-500 text-sm p-2 w-4/5 capitalize rounded-md"
-									>
-										tonton trailer
-									</button>
-								</div> -->
 							</button>
 						</div>
 					</div>
 				</div>
+
+				<!-- tv series terpopuler -->
+				<div class="mb-8">
+					<div class="flex justify-between items-center">
+						<div class="font-extrabold text-xl">TV Series Terpopuler</div>
+						<button
+							class="bg-red-400 hover:bg-red-500 text-white rounded-md p-1 px-2 text-sm"
+						>
+							Lihat Semua
+						</button>
+					</div>
+					<div class="flex mt-4 overflow-x-auto">
+						<div
+							v-for="(item, index) in listPopularTvSeries[0]"
+							:key="`list populer movie - ${index}`"
+							class="display-movie"
+						>
+							<button class="mr-2 mb-2 poster-movie" @click="detailTv(item)">
+								<img
+									:src="posterMovie(item.poster_path)"
+									alt=""
+									class="w-full h-full object-cover pointer-events-none rounded-md"
+								/>
+								<div class="title-movie rounded-md">
+									{{ item.original_name }}
+								</div>
+							</button>
+						</div>
+					</div>
+				</div>
+
+				<!-- rekomendasi film -->
 			</div>
 		</div>
 	</LayoutDefault>
@@ -86,6 +106,7 @@ export default {
 
 		const listGenre = reactive([]);
 		const listPopularMovie = reactive([]);
+		const listPopularTvSeries = reactive([]);
 
 		const loadListGenre = () => {
 			const params = {
@@ -104,30 +125,62 @@ export default {
 			return api().movie.getListPopulerMovie(params);
 		};
 
+		const loadListPopulerTvSeries = () => {
+			const params = {
+				language: "en-US",
+				page: 1,
+			};
+
+			return api().movie.getPopulerTvSeries(params);
+		};
+
 		const loadAllData = () => {
 			isLoading.value = true;
 
-			Promise.all([loadListGenre(), loadListPopulerMovie()])
-				.then(([listGenres, listPopulerMovie]) => {
+			Promise.all([
+				loadListGenre(),
+				loadListPopulerMovie(),
+				loadListPopulerTvSeries(),
+			])
+				.then(([listGenres, listPopulerMovie, listPopulerTvSeries]) => {
 					const {
 						data: { genres },
 					} = listGenres;
 					listGenre.push(genres);
 
 					const {
-						data: { results },
+						data: { results: resultPopularMovie },
 					} = listPopulerMovie;
-					listPopularMovie.push(results);
+					listPopularMovie.push(resultPopularMovie);
+
+					const {
+						data: { results: resultTvResies },
+					} = listPopulerTvSeries;
+					listPopularTvSeries.push(resultTvResies);
 				})
 				.catch((error) => console.log(error))
 				.finally(() => (isLoading.value = false));
 		};
 
+		// eslint-disable-next-line no-unused-vars
+		const getValue = (key, objectName) => {
+			const { [key]: returnValue } = objectName;
+			return returnValue;
+		};
+
 		const detailMovie = (item) => {
-			// console.log(item.poster_path);
-			// location.replace(`/detail?id=${item.id}&image=${item.backdrop_path}`);
 			router.replace({
-				path: "/detail",
+				path: "/detail/movie",
+				query: {
+					id: item.id,
+					image: item.backdrop_path,
+				},
+			});
+		};
+
+		const detailTv = (item) => {
+			router.replace({
+				path: "/detail/tv",
 				query: {
 					id: item.id,
 					image: item.backdrop_path,
@@ -156,8 +209,10 @@ export default {
 			isLoading,
 			listGenre,
 			listPopularMovie,
+			listPopularTvSeries,
 			posterMovie,
 			detailMovie,
+			detailTv,
 		};
 	},
 };
