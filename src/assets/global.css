@@ -9,7 +9,7 @@
 
 /* *:not(body) { transition: all .1s ease; } */
 html {
-	height: 100vh;
+	/* height: 100vh; */
 }
 body {
   /* min-height: 100vh; */

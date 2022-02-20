@@ -18,9 +18,17 @@ const router = createRouter({
 			component: () => import("../views/home/Home.vue"),
 		},
 		{
-			path: "/detail",
-			name: "detail",
-			component: () => import("../views/detail/Detail.vue"),
+			path: "/detail/movie",
+			name: "detail/movie",
+			component: () => import("../views/detail/Movie.vue"),
+			meta: {
+				reload: true,
+			},
+		},
+		{
+			path: "/detail/tv",
+			name: "detail/tv",
+			component: () => import("../views/detail/Tv.vue"),
 			meta: {
 				reload: true,
 			},

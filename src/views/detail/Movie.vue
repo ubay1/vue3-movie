@@ -1,6 +1,6 @@
 <template>
 	<LayoutDefault>
-		<div class="flex flex-col justify-between gap-4 m-4 md:h-1/2">
+		<div class="flex flex-col justify-between gap-4 mx-4 mt-4 md:h-1/2">
 			<div class="flex flex-col justify-between gap-4 md:flex-row">
 				<!-- video utama -->
 				<div
@@ -72,24 +72,36 @@
 
 			<div class="my-3">
 				<hr />
-				<div class="mt-3 mb-10">
-					Lorem, ipsum dolor sit amet consectetur adipisicing elit. Esse iste
-					alias repellendus temporibus sint repellat dolor consectetur corporis
-					minus! Eum quo qui rem nostrum dolore hic. Ullam, quo! Ex, saepe?
-					Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-					esse nam adipisci. Neque pariatur ipsam praesentium corrupti quos
-					consequatur, doloremque eligendi minus ducimus. Consectetur expedita
-					quos ut nemo. At, rem?
+
+				<div class="mt-3">
+					<LoaderCircle
+						v-if="isLoadingListVideo"
+						:is-loading="isLoadingListVideo"
+					/>
+					<div v-else>
+						<div class="text-lg font-bold mb-3">{{ dataMovie.title }}</div>
+						<div class="flex gap-4">
+							<div class="w-1/3">
+								<img
+									:src="thumbnailImagePoster(compPosterImageMovie)"
+									alt="backdrop-image-movie"
+									class="h-full w-full"
+								/>
+							</div>
+							<div class="w-2/3">
+								{{ dataMovie.overview }}
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
 	</LayoutDefault>
-	<!-- {{ dataMovie }} -->
 </template>
 
 <script>
 // eslint-disable-next-line no-unused-vars
-import { ref, reactive, toRefs, onMounted, watch } from "vue";
+import { ref, reactive, toRefs, onMounted, watch, computed } from "vue";
 import { useRoute } from "vue-router";
 import LayoutDefault from "@/layouts/Default.vue";
 import LoaderCircle from "@/components/atoms/loader/LoaderCircle.vue";
@@ -114,9 +126,12 @@ export default {
 		const isLoadingListVideo = ref(false);
 		const dataMainVideos = ref({});
 		const indexMainVideos = ref(0);
-		const imageMovie = ref(null);
+		const backdropImageMovie = ref(null);
+		const posterImageMovie = reactive({
+			file_path: "",
+		});
 		const dataVideos = reactive([]);
-		const dataMovie = reactive([]);
+		const dataMovie = ref({});
 		const route = useRoute();
 
 		/* -------------------------------------------------------------------------- */
@@ -149,7 +164,17 @@ export default {
 			return api().movie.getDetailMovie(params);
 		};
 
-		const getVideos = () => {
+		const getImagesFromMovie = () => {
+			const params = {
+				movieId: route.query.id,
+				language: "en-US",
+				include_image_language: "en",
+			};
+
+			return api().movie.getImagesFromMovie(params);
+		};
+
+		const getVideosFromMovie = () => {
 			const params = {
 				language: "en-US",
 				movieId: route.query.id,
@@ -162,18 +187,33 @@ export default {
 			isLoading.value = true;
 			isLoadingListVideo.value = true;
 
-			Promise.all([getDetailMovie(), getVideos()])
-				.then(([detailMovie, videos]) => {
-					const { data } = detailMovie;
-					dataMovie.push(data);
+			Promise.all([
+				getImagesFromMovie(),
+				getDetailMovie(),
+				getVideosFromMovie(),
+			])
+				.then(([imagesMovie, detailMovie, videosMovie]) => {
+					const {
+						data: { posters },
+					} = imagesMovie;
+					posters.length > 1
+						? (posterImageMovie.file_path = posters[1].file_path)
+						: posters.length > 0
+						? (posterImageMovie.file_path = posters[0].file_path)
+						: null;
+
+					const { data: resultDetailMovie } = detailMovie;
+					const updateDataMovie = { ...dataMovie.value, ...resultDetailMovie };
+					dataMovie.value = updateDataMovie;
+					console.log(resultDetailMovie);
 
 					const {
-						data: { results },
-					} = videos;
+						data: { results: resultVideos },
+					} = videosMovie;
 
-					if (results.length !== 0) {
-						dataMainVideos.value = results[0];
-						dataVideos.push(results);
+					if (resultVideos.length !== 0) {
+						dataMainVideos.value = resultVideos[0];
+						dataVideos.push(resultVideos);
 					}
 				})
 				.catch((error) => console.log(error))
@@ -184,18 +224,26 @@ export default {
 		};
 
 		const thumbnailImageVideo = () => {
-			if (![null, "", undefined].includes(imageMovie.value)) {
+			if (![null, "", undefined].includes(backdropImageMovie.value)) {
 				return `${import.meta.env.VITE_POSTER_IMAGE_URL}w300${
-					imageMovie.value
+					backdropImageMovie.value
 				}`;
+			}
+		};
+
+		const thumbnailImagePoster = (image) => {
+			if (![null, "", undefined].includes(image)) {
+				return `${import.meta.env.VITE_BACKDROP_IMAGE_URL}w780${image}`;
+			} else {
+				return `https://agent1.pk/images/uploads/img.jpg`;
 			}
 		};
 		/* -------------------------------------------------------------------------- */
 		/*                                 computed                                   */
 		/* -------------------------------------------------------------------------- */
-		//const compCount = computed(() => {
-		//	return count.value + 2;
-		//});
+		const compPosterImageMovie = computed(() => {
+			return posterImageMovie.file_path;
+		});
 		/* -------------------------------------------------------------------------- */
 		/*                                 watchEffecter                                    */
 		/* -------------------------------------------------------------------------- */
@@ -206,7 +254,7 @@ export default {
 		/* -------------------------------------------------------------------------- */
 		onMounted(() => {
 			// console.log("query route = ", route.query);
-			imageMovie.value = route.query.image;
+			backdropImageMovie.value = route.query.image;
 			loadAllApi();
 			// loadAllEndpoint();
 		});
@@ -229,8 +277,22 @@ export default {
 			openVideo,
 			changeMainVideo,
 			thumbnailImageVideo,
-			imageMovie,
+			thumbnailImagePoster,
+			backdropImageMovie,
+			posterImageMovie,
+			compPosterImageMovie,
 		};
 	},
 };
 </script>
+
+<style scoped>
+.grid-container-detail-movie {
+	display: grid;
+	grid-template-columns: 20% 80%;
+}
+
+.grid-item-detail-movie-img {
+	height: 200px;
+}
+</style>
