@@ -28,19 +28,20 @@ body {
 /* width */
 ::-webkit-scrollbar {
   width: 10px;
-	height: 5px;;
+	height: 5px;
+	background-color: unset;
 }
 
 /* Track */
 ::-webkit-scrollbar-track {
   box-shadow: inset 0 0 0px grey;
-  border-radius: 10px;
+  /* border-radius: 10px; */
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
   background: #6b7280;
-  border-radius: 10px;
+  /* border-radius: 10px; */
 }
 
 /* -------------------------------------------------------------------------- */
@@ -52,11 +53,12 @@ body {
 
 .img-lazy {
 	transition: all 1s;
-	transform: translateX(-20px);
-	/* transform: translateY(-20px); */
+	/* transform: translateX(-50px); */
+	transform: translateY(-50px);
 	/* transform: scale(0); */
   opacity: 0;
 }
+
 
 .fadeInLeft {
   transform: translateX(0px) !important;

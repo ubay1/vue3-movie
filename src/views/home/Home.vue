@@ -38,13 +38,19 @@
 							class="display-movie"
 						>
 							<button class="mr-2 mb-2 poster-movie" @click="detailMovie(item)">
-								<img
-									:src="posterMovie(item.poster_path)"
-									alt=""
-									class="w-full h-full object-cover pointer-events-none rounded-md"
-								/>
-								<div class="title-movie rounded-md">
-									{{ item.original_title }}
+								<div
+									id="detail-movie"
+									class="w-full h-72 flex items-center rounded-md bg-gray-200 dark:bg-gray-500"
+								>
+									<img
+										src="@/assets/images/loader.gif"
+										v-lazy="posterMovie(item.poster_path)"
+										alt=""
+										class="bg-loader m-auto object-cover pointer-events-none rounded-md"
+									/>
+									<div class="title-movie rounded-md">
+										{{ item.original_title }}
+									</div>
 								</div>
 							</button>
 						</div>
@@ -223,9 +229,6 @@ export default {
 	display: grid;
 	grid-template-columns: 200px;
 }
-.poster-movie:hover .overlay {
-	opacity: 1;
-}
 .title-movie {
 	background: url("https://s8.indexmovies.xyz/wp-content/themes/dunia21/images/mask-title.png")
 		center top repeat-x;
@@ -241,6 +244,9 @@ export default {
 	font-weight: 500;
 	margin: 0;
 	text-shadow: 0 0 2px #000;
+}
+.poster-movie:hover .overlay {
+	opacity: 1;
 }
 .overlay {
 	position: absolute;
@@ -261,5 +267,10 @@ export default {
 	text-align: center;
 	z-index: 10;
 	border-radius: 0.375rem;
+}
+
+.bg-loader {
+	width: 3.5rem;
+	height: 3.5rem;
 }
 </style>
