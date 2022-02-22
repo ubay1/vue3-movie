@@ -70,6 +70,7 @@
 				</div>
 			</div>
 
+			<!-- deskripsi movie -->
 			<div class="my-3">
 				<hr />
 
@@ -80,16 +81,63 @@
 					/>
 					<div v-else>
 						<div class="text-lg font-bold mb-3">{{ dataMovie.title }}</div>
-						<div class="flex gap-4">
-							<div class="w-1/3">
+						<div class="flex flex-col md:flex-row gap-4">
+							<div
+								class="w-1/2 m-auto sm:w-2/5 md:w-1/5 md:m-0 lg:w-1/5 lg:m-0"
+							>
 								<img
 									:src="thumbnailImagePoster(compPosterImageMovie)"
 									alt="backdrop-image-movie"
-									class="h-full w-full"
+									class="h-full w-full object-cover"
 								/>
 							</div>
-							<div class="w-2/3">
-								{{ dataMovie.overview }}
+							<div class="w-full md:w-2/3">
+								<div class="flex flex-col gap-2">
+									<div class="grid-container-title">
+										<div class="title">Negara:</div>
+										<div class="flex gap-x-2 flex-wrap">
+											<div
+												v-for="(item, index) in dataMovie.production_countries"
+												:key="`dataProductionCountry - ${index}`"
+											>
+												{{
+													`${item.name}${checkCommaOrPoint(
+														dataMovie.production_countries.length,
+														index
+													)}`
+												}}
+											</div>
+										</div>
+									</div>
+									<div class="grid-container-title">
+										<div class="title">Genre Film:</div>
+										<div class="flex gap-x-2 flex-wrap">
+											<div
+												v-for="(item, index) in dataMovie.genres"
+												:key="`dataGenreFilm - ${index}`"
+											>
+												{{
+													`${item.name}${checkCommaOrPoint(
+														dataMovie.genres.length,
+														index
+													)}`
+												}}
+											</div>
+										</div>
+									</div>
+									<div class="grid-container-title">
+										<div class="title">Diterbitkan:</div>
+										<div>{{ dataMovie.release_date }}</div>
+									</div>
+									<div class="grid-container-title">
+										<div class="title">Budget:</div>
+										<div>{{ formatCurrency(dataMovie.budget) }}</div>
+									</div>
+									<div class="grid-container-title">
+										<div class="title">Synopsis:</div>
+										<div>{{ dataMovie.overview }}</div>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -106,20 +154,13 @@ import { useRoute } from "vue-router";
 import LayoutDefault from "@/layouts/Default.vue";
 import LoaderCircle from "@/components/atoms/loader/LoaderCircle.vue";
 import Api from "@/apis";
+import { formatCurrency } from "../../utils/currency";
 // import axios from "axios";
 
 export default {
 	components: {
 		LayoutDefault,
 		LoaderCircle,
-	},
-	props: {
-		title: {
-			type: String,
-			default: () => {
-				return "hallo ha";
-			},
-		},
 	},
 	setup(props) {
 		const isLoading = ref(false);
@@ -238,6 +279,10 @@ export default {
 				return `https://agent1.pk/images/uploads/img.jpg`;
 			}
 		};
+
+		const checkCommaOrPoint = (dataLength, index) => {
+			return dataLength > 1 && index !== dataLength - 1 ? "," : ".";
+		};
 		/* -------------------------------------------------------------------------- */
 		/*                                 computed                                   */
 		/* -------------------------------------------------------------------------- */
@@ -281,18 +326,44 @@ export default {
 			backdropImageMovie,
 			posterImageMovie,
 			compPosterImageMovie,
+			checkCommaOrPoint,
+			formatCurrency,
 		};
 	},
 };
 </script>
 
 <style scoped>
-.grid-container-detail-movie {
-	display: grid;
-	grid-template-columns: 20% 80%;
+@media (min-width: 0px) and (max-width: 639.9px) {
+	.grid-container-title {
+		display: grid;
+		grid-template-columns: repeat(1, 1fr);
+	}
 }
 
-.grid-item-detail-movie-img {
-	height: 200px;
+@media (min-width: 640px) and (max-width: 767.9px) {
+	.grid-container-title {
+		display: grid;
+		grid-template-columns: 20% 80%;
+		/* padding-left: 2rem;
+		padding-right: 2rem; */
+	}
+	.grid-container-title .title {
+		align-self: flex-start;
+	}
+}
+
+@media (min-width: 768px) and (max-width: 1023.9px) {
+	.grid-container-title {
+		display: grid;
+		grid-template-columns: 25% 75%;
+	}
+}
+
+@media (min-width: 1024px) {
+	.grid-container-title {
+		display: grid;
+		grid-template-columns: 15% 85%;
+	}
 }
 </style>
