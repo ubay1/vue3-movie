@@ -39,14 +39,12 @@
 						>
 							<button class="mr-2 mb-2 poster-movie" @click="detailMovie(item)">
 								<div
-									id="detail-movie"
-									class="w-full h-72 flex items-center rounded-md bg-gray-200 dark:bg-gray-500"
+									class="shimmer-image bg-gray-200 dark:bg-gray-400 flex items-center rounded-md"
 								>
 									<img
-										src="@/assets/images/loader.gif"
 										v-lazy="posterMovie(item.poster_path)"
 										alt=""
-										class="bg-loader m-auto object-cover pointer-events-none rounded-md"
+										class="m-auto object-cover pointer-events-none rounded-md"
 									/>
 									<div class="title-movie rounded-md">
 										{{ item.original_title }}
@@ -74,13 +72,17 @@
 							class="display-movie"
 						>
 							<button class="mr-2 mb-2 poster-movie" @click="detailTv(item)">
-								<img
-									:src="posterMovie(item.poster_path)"
-									alt=""
-									class="w-full h-full object-cover pointer-events-none rounded-md"
-								/>
-								<div class="title-movie rounded-md">
-									{{ item.original_name }}
+								<div
+									class="shimmer-image bg-gray-200 dark:bg-gray-400 flex items-center rounded-md"
+								>
+									<img
+										v-lazy="posterMovie(item.poster_path)"
+										alt=""
+										class="m-auto object-cover pointer-events-none rounded-md"
+									/>
+									<div class="title-movie rounded-md">
+										{{ item.original_name }}
+									</div>
 								</div>
 							</button>
 						</div>
@@ -269,8 +271,8 @@ export default {
 	border-radius: 0.375rem;
 }
 
-.bg-loader {
+/* .bg-loading-image {
 	width: 3.5rem;
 	height: 3.5rem;
-}
+} */
 </style>

@@ -53,10 +53,10 @@
 							>
 								<div class="flex justify-between gap-2 p-2 h-24">
 									<div class="w-1/2 sm:w-1/4 md:w-1/2 lg:w-1/3 h-full">
-										<div class="h-full">
+										<div class="h-full border-0">
 											<img
 												v-lazy="thumbnailImageVideo()"
-												class="placeholder bg-gray-100 img-lazy w-full h-full object-cover object-top"
+												class="bg-gray-200 dark:bg-gray-400 img-lazy w-full h-full object-cover object-top"
 											/>
 										</div>
 									</div>
