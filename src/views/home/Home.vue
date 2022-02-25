@@ -6,7 +6,25 @@
 
 			<div v-else class="flex flex-col">
 				<!-- genres -->
-				<div class="flex justify-center items-center my-4">
+				<div class="mt-6 mb-8 hidden md:block">
+					<Carousel :breakpoints="breakpointsListGenre">
+						<Slide 
+							v-for="(item, index) in listGenre[0]"
+							:key="`list-genre ${index}`"
+						>
+							<div
+								class="w-full h-full cursor-pointer bg-gray-600 hover:bg-gray-700 text-white dark:bg-white dark:hover:bg-gray-100 dark:text-gray-800 p-2 rounded-md whitespace-nowrap text-ellipsis overflow-hidden"
+							>
+								{{ item.name }}
+							</div>
+						</Slide>
+	
+						<template #addons>
+							<Navigation />
+						</template>
+					</Carousel>
+				</div>
+				<div class="flex justify-center items-center mt-6 mb-8 md:hidden">
 					<div class="flex overflow-x-auto">
 						<div
 							v-for="(item, index) in listGenre[0]"
@@ -23,7 +41,7 @@
 
 				<!-- popular movie -->
 				<div class="mb-8">
-					<div class="flex justify-between items-center">
+					<div class="flex justify-between items-center md:px-3">
 						<div class="font-extrabold text-xl">Film Terpopuler</div>
 						<button
 							class="bg-red-400 hover:bg-red-500 text-white rounded-md p-1 px-2 text-sm"
@@ -31,7 +49,34 @@
 							Lihat Semua
 						</button>
 					</div>
-					<div class="flex mt-4 overflow-x-auto">
+					<div class="mt-2 hidden md:block">
+						<Carousel :breakpoints="breakpointsListPopularMovie">
+							<Slide 
+								v-for="(item, index) in listPopularMovie[0]"
+								:key="`list populer movie ${index}`"
+							>
+								<button class="w-full poster-movie" @click="detailMovie(item)">
+									<div
+										class="shimmer-image bg-gray-200 dark:bg-gray-400 flex items-center rounded-md"
+									>
+										<img
+											v-lazy="posterMovie(item.poster_path)"
+											alt=""
+											class="m-auto object-cover pointer-events-none rounded-md"
+										/>
+										<div class="title-movie rounded-md">
+											{{ item.original_title }}
+										</div>
+									</div>
+								</button>
+							</Slide>
+		
+							<template #addons>
+								<Navigation />
+							</template>
+						</Carousel>
+					</div>
+					<div class="flex mt-4 overflow-x-auto md:hidden">
 						<div
 							v-for="(item, index) in listPopularMovie[0]"
 							:key="`list populer movie - ${index}`"
@@ -57,7 +102,7 @@
 
 				<!-- tv series terpopuler -->
 				<div class="mb-8">
-					<div class="flex justify-between items-center">
+					<div class="flex justify-between items-center md:px-3">
 						<div class="font-extrabold text-xl">TV Series Terpopuler</div>
 						<button
 							class="bg-red-400 hover:bg-red-500 text-white rounded-md p-1 px-2 text-sm"
@@ -65,7 +110,34 @@
 							Lihat Semua
 						</button>
 					</div>
-					<div class="flex mt-4 overflow-x-auto">
+					<div class="mt-4 hidden md:block">
+						<Carousel :breakpoints="breakpointsListPopularMovie">
+							<Slide 
+								v-for="(item, index) in listPopularTvSeries[0]"
+								:key="`list populer movie ${index}`"
+							>
+								<button class="w-full poster-movie" @click="detailTv(item)">
+									<div
+										class="shimmer-image bg-gray-200 dark:bg-gray-400 flex items-center rounded-md"
+									>
+										<img
+											v-lazy="posterMovie(item.poster_path)"
+											alt=""
+											class="m-auto object-cover pointer-events-none rounded-md"
+										/>
+										<div class="title-movie rounded-md">
+											{{ item.original_name }}
+										</div>
+									</div>
+								</button>
+							</Slide>
+		
+							<template #addons>
+								<Navigation />
+							</template>
+						</Carousel>
+					</div>
+					<div class="flex mt-4 overflow-x-auto md:hidden">
 						<div
 							v-for="(item, index) in listPopularTvSeries[0]"
 							:key="`list populer movie - ${index}`"
@@ -98,6 +170,8 @@
 <script>
 // eslint-disable-next-line no-unused-vars
 import { onBeforeMount, onMounted, onUnmounted, reactive, ref } from "vue";
+import { Carousel, Navigation, Slide } from 'vue3-carousel';
+import 'vue3-carousel/dist/carousel.css';
 import LayoutDefault from "@/layouts/Default.vue";
 import LoaderCircle from "@/components/atoms/loader/LoaderCircle.vue";
 import Api from "@/apis";
@@ -107,6 +181,9 @@ export default {
 	components: {
 		LayoutDefault,
 		LoaderCircle,
+		Carousel,
+    Slide,
+    Navigation,
 	},
 	setup() {
 		const isLoading = ref(false);
@@ -115,6 +192,53 @@ export default {
 		const listGenre = reactive([]);
 		const listPopularMovie = reactive([]);
 		const listPopularTvSeries = reactive([]);
+
+		const settings = reactive({
+      itemsToShow: 1,
+      snapAlign: 'center',
+    })
+
+		const breakpointsListGenre = ({
+      // 700px and up
+      768: {
+        itemsToShow: 5,
+        snapAlign: 'center',
+      },
+      // 1024 and up
+      1024: {
+        itemsToShow: 8,
+        snapAlign: 'start',
+      },
+			1280: {
+        itemsToShow: 10,
+        snapAlign: 'start',
+      },
+    })
+
+		const breakpointsListPopularMovie = ({
+      // 700px and up
+      768: {
+        itemsToShow: 3,
+        snapAlign: 'center',
+      },
+			850: {
+        itemsToShow: 4,
+        snapAlign: 'center',
+      },
+      // 1024 and up
+      1024: {
+        itemsToShow: 5,
+        snapAlign: 'start',
+      },
+			1280: {
+        itemsToShow: 6,
+        snapAlign: 'start',
+      },
+			1500: {
+        itemsToShow: 7,
+        snapAlign: 'start',
+      },
+    })
 
 		const loadListGenre = () => {
 			const params = {
@@ -214,6 +338,8 @@ export default {
 		onUnmounted(() => console.log("destroy page home"));
 
 		return {
+			breakpointsListGenre,
+			breakpointsListPopularMovie,
 			isLoading,
 			listGenre,
 			listPopularMovie,
@@ -239,7 +365,7 @@ export default {
 	padding: 10px 5px;
 	position: absolute;
 	width: 100%;
-	z-index: 5;
+	z-index: 20;
 	color: #fff;
 	text-align: center;
 	/* font-size: 80%; */
@@ -271,8 +397,59 @@ export default {
 	border-radius: 0.375rem;
 }
 
-/* .bg-loading-image {
-	width: 3.5rem;
-	height: 3.5rem;
+@media (min-width: 0px) and (max-width: 767.9px) {
+	.list-genre-carousel {
+		display: none;
+	}
+}
+/* .carousel__item {
+  min-height: 200px;
+  width: 100%;
+  background-color: var(--vc-clr-primary);
+  color:  var(--vc-clr-white);
+  font-size: 20px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 } */
+
+.carousel__slide {
+  padding: 10px;
+}
+
+.carousel__prev--in-active {
+	opacity: 0;
+	left: 50px !important;
+	cursor: default;
+	z-index: -10;
+}
+.carousel__next--in-active {
+	opacity: 0;
+	right: 50px !important;
+	cursor: default;
+	z-index: -10;
+}
+
+.carousel__prev {
+	left: 20px;
+	border: unset !important;
+	background: #fff;
+	padding: 5px;
+	transition: all 0.5s cubic-bezier(0.2, 0.64, 0.21, 1) 0s;
+	box-sizing: content-box;
+	box-shadow: 0px 2px 4px gray;
+}
+.carousel__next {
+	right: 20px;
+	border: unset;
+	background: #fff;
+	padding: 5px;
+	transition: all 0.5s cubic-bezier(0.2, 0.64, 0.21, 1) 0s;
+	box-sizing: content-box;
+	box-shadow: 0px 2px 4px gray;
+}
+.carousel__icon {
+	fill: #000 !important;
+}
 </style>

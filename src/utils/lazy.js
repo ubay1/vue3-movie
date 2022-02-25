@@ -24,7 +24,8 @@ export default function (Vue) {
 						});
 					},
 					{
-						threshold: 0.1,
+						threshold: 0,
+						rootMargin: "0px",
 					}
 				);
 
