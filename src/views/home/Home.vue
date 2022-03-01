@@ -1,7 +1,6 @@
 <template>
 	<LayoutDefault>
 		<div class="px-2 sm:px-6 lg:px-8">
-			<!-- loader -->
 			<LoaderCircle v-if="isLoading" :is-loading="isLoading" class="mt-10" />
 
 			<div v-else class="flex flex-col">
@@ -160,22 +159,42 @@
 						</div>
 					</div>
 				</div>
-
-				<!-- rekomendasi film -->
 			</div>
+			<!-- <button @click="isOpen = !isOpen">click</button>
+			<div v-if="errors">{{errors}}</div>
+			<AsyncComp v-if="isOpen"/> -->
 		</div>
 	</LayoutDefault>
 </template>
 
 <script>
 // eslint-disable-next-line no-unused-vars
-import { onBeforeMount, onMounted, onUnmounted, reactive, ref } from "vue";
+import { onBeforeMount, defineAsyncComponent, onMounted, onUnmounted, reactive, ref, onErrorCaptured } from "vue";
 import { Carousel, Navigation, Slide } from 'vue3-carousel';
 import 'vue3-carousel/dist/carousel.css';
 import LayoutDefault from "@/layouts/Default.vue";
 import LoaderCircle from "@/components/atoms/loader/LoaderCircle.vue";
+import TestLoading from "@/components/atoms/TestLoading.vue";
 import Api from "@/apis";
 import { useRouter } from "vue-router";
+
+// const TestDefineAsyncComponent = () => {
+// 	return new Promise((resolve, reject) => {
+// 		try {
+// 			resolve (import("@/components/atoms/Test.vue"))
+// 		} catch (error) {
+// 			reject(error)
+// 		}
+// 	})
+// }
+
+// const AsyncComp = defineAsyncComponent(({
+// 	loader: TestDefineAsyncComponent,
+// 	loadingComponent: TestLoading,
+// 	delay: 100, // delay loading
+// 	timeout: 10 // timout jika component tampil melebihi 3000ms
+// })
+// )
 
 export default {
 	components: {
@@ -186,6 +205,9 @@ export default {
     Navigation,
 	},
 	setup() {
+		const isOpen = ref(false);
+		const errors = ref(null);
+
 		const isLoading = ref(false);
 		const router = useRouter();
 
@@ -337,7 +359,13 @@ export default {
 
 		onUnmounted(() => console.log("destroy page home"));
 
+		onErrorCaptured((e) => {
+			errors.value = e;
+		})
+
 		return {
+			isOpen,
+			errors,
 			breakpointsListGenre,
 			breakpointsListPopularMovie,
 			isLoading,

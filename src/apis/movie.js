@@ -96,6 +96,20 @@ export default (baseUrl, apiKey) => {
 				});
 		},
 
+		getImagesFromTv: ({ movieId, language, include_image_language }) => {
+			const fetcher = createAxios();
+
+			return fetcher
+				.get(
+					`/tv/${movieId}/images?api_key=${apiKey}&language=${language}&include_image_language=${include_image_language}`
+				)
+				.then((response) => response)
+				.catch((error) => {
+					console.log(error);
+					return null;
+				});
+		},
+
 		getVideosFromTv: ({ language, tvId }) => {
 			const fetcher = createAxios();
 

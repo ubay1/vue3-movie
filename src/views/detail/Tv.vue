@@ -1,6 +1,6 @@
 <template>
 	<LayoutDefault>
-		<div class="flex flex-col justify-between gap-4 m-4 md:h-1/2">
+		<div class="flex flex-col justify-between gap-4 mx-4 mt-4 md:h-1/2">
 			<div class="flex flex-col justify-between gap-4 md:flex-row">
 				<!-- video utama -->
 				<div
@@ -56,7 +56,7 @@
 										<div class="h-full">
 											<img
 												v-lazy="thumbnailImageVideo()"
-												class="placeholder bg-gray-100 img-lazy w-full h-full object-cover object-top"
+												class="placeholder bg-gray-200 dark:bg-gray-400 img-lazy w-full h-full object-cover object-top"
 											/>
 										</div>
 									</div>
@@ -70,26 +70,86 @@
 				</div>
 			</div>
 
+			<!-- deskripsi movie -->
 			<div class="my-3">
 				<hr />
-				<div class="mt-3 mb-10">
-					Lorem, ipsum dolor sit amet consectetur adipisicing elit. Esse iste
-					alias repellendus temporibus sint repellat dolor consectetur corporis
-					minus! Eum quo qui rem nostrum dolore hic. Ullam, quo! Ex, saepe?
-					Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-					esse nam adipisci. Neque pariatur ipsam praesentium corrupti quos
-					consequatur, doloremque eligendi minus ducimus. Consectetur expedita
-					quos ut nemo. At, rem?
+
+				<div class="mt-3">
+					<LoaderCircle
+						v-if="isLoadingListVideo"
+						:is-loading="isLoadingListVideo"
+					/>
+					<div v-else>
+						<div class="text-lg font-bold mb-3">{{ dataTv.name }}</div>
+						<div class="flex flex-col md:flex-row gap-4">
+							<div
+								class="w-1/2 m-auto sm:w-2/5 md:w-1/5 md:m-0 lg:w-1/5 lg:m-0"
+							>
+								<img
+									:src="thumbnailImagePoster(compPosterImageTv)"
+									alt="backdrop-image-movie"
+									class="h-full w-full object-cover"
+								/>
+							</div>
+							<div class="w-full md:w-2/3">
+								<div class="flex flex-col gap-2">
+									<div class="grid-container-title">
+										<div class="title">Negara:</div>
+										<div class="flex gap-x-2 flex-wrap">
+											<div
+												v-for="(item, index) in dataTv.production_countries"
+												:key="`dataProductionCountry - ${index}`"
+											>
+												{{
+													`${item.name}${checkCommaOrPoint(
+														dataTv.production_countries.length,
+														index
+													)}`
+												}}
+											</div>
+										</div>
+									</div>
+									<div class="grid-container-title">
+										<div class="title">Genre Film:</div>
+										<div class="flex gap-x-2 flex-wrap">
+											<div
+												v-for="(item, index) in dataTv.genres"
+												:key="`dataGenreFilm - ${index}`"
+											>
+												{{
+													`${item.name}${checkCommaOrPoint(
+														dataTv.genres.length,
+														index
+													)}`
+												}}
+											</div>
+										</div>
+									</div>
+									<div class="grid-container-title">
+										<div class="title">Diterbitkan:</div>
+										<div>{{ dataTv.first_air_date }}</div>
+									</div>
+									<div class="grid-container-title">
+										<div class="title">Status:</div>
+										<div>{{ dataTv.status === 'Ended' ? 'Selesai' : 'Sedang Jalan' }}</div>
+									</div>
+									<div class="grid-container-title">
+										<div class="title">Synopsis:</div>
+										<div>{{ dataTv.overview }}</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
 	</LayoutDefault>
-	<!-- {{ dataMovie }} -->
 </template>
 
 <script>
 // eslint-disable-next-line no-unused-vars
-import { ref, reactive, toRefs, onMounted, watch } from "vue";
+import { ref, reactive, toRefs, onMounted, watch, computed } from "vue";
 import { useRoute } from "vue-router";
 import LayoutDefault from "@/layouts/Default.vue";
 import LoaderCircle from "@/components/atoms/loader/LoaderCircle.vue";
@@ -116,7 +176,10 @@ export default {
 		const indexMainVideos = ref(0);
 		const imageMovie = ref(null);
 		const dataVideos = reactive([]);
-		const dataMovie = reactive([]);
+		const dataTv = ref({});
+		const posterImageTv = reactive({
+			file_path: "",
+		});
 		const route = useRoute();
 
 		/* -------------------------------------------------------------------------- */
@@ -149,6 +212,16 @@ export default {
 			return api().movie.getDetailTv(params);
 		};
 
+		const getImagesFromTv = () => {
+			const params = {
+				movieId: route.query.id,
+				language: "en-US",
+				include_image_language: "en",
+			};
+
+			return api().movie.getImagesFromTv(params);
+		};
+
 		const getVideos = () => {
 			const params = {
 				language: "en-US",
@@ -162,18 +235,29 @@ export default {
 			isLoading.value = true;
 			isLoadingListVideo.value = true;
 
-			Promise.all([getDetailTv(), getVideos()])
-				.then(([detailTv, videos]) => {
-					const { data } = detailTv;
-					dataMovie.push(data);
+			Promise.all([getImagesFromTv(), getDetailTv(), getVideos()])
+				.then(([imagesTv, detailTv, videos]) => {
+					const {
+						data: { posters },
+					} = imagesTv;
+					posters.length > 1
+						? (posterImageTv.file_path = posters[1].file_path)
+						: posters.length > 0
+						? (posterImageTv.file_path = posters[0].file_path)
+						: null;
+
+					const { data: resultDetailTv } = detailTv;
+					const updateDataMovie = { ...dataTv.value, ...resultDetailTv };
+					dataTv.value = updateDataMovie;
+					// console.log(resultDetailMovie);
 
 					const {
-						data: { results },
+						data: { results: resultVideos },
 					} = videos;
 
-					if (results.length !== 0) {
-						dataMainVideos.value = results[0];
-						dataVideos.push(results);
+					if (resultVideos.length !== 0) {
+						dataMainVideos.value = resultVideos[0];
+						dataVideos.push(resultVideos);
 					}
 				})
 				.catch((error) => console.log(error))
@@ -190,12 +274,27 @@ export default {
 				}`;
 			}
 		};
+
+		const thumbnailImagePoster = (image) => {
+			if (![null, "", undefined].includes(image)) {
+				return `${import.meta.env.VITE_BACKDROP_IMAGE_URL}w780${image}`;
+			} else {
+				return `https://agent1.pk/images/uploads/img.jpg`;
+			}
+		};
+
+		const checkCommaOrPoint = (dataLength, index) => {
+			return dataLength > 1 && index !== dataLength - 1 ? "," : ".";
+		};
 		/* -------------------------------------------------------------------------- */
 		/*                                 computed                                   */
 		/* -------------------------------------------------------------------------- */
 		//const compCount = computed(() => {
 		//	return count.value + 2;
 		//});
+		const compPosterImageTv = computed(() => {
+			return posterImageTv.file_path;
+		});
 		/* -------------------------------------------------------------------------- */
 		/*                                 watchEffecter                                    */
 		/* -------------------------------------------------------------------------- */
@@ -224,13 +323,51 @@ export default {
 			dataMainVideos,
 			indexMainVideos,
 			dataVideos,
-			dataMovie,
+			dataTv,
 			...toRefs(props),
 			openVideo,
 			changeMainVideo,
 			thumbnailImageVideo,
+			thumbnailImagePoster,
+			checkCommaOrPoint,
+			compPosterImageTv,
 			imageMovie,
 		};
 	},
 };
 </script>
+
+<style scoped>
+@media (min-width: 0px) and (max-width: 639.9px) {
+	.grid-container-title {
+		display: grid;
+		grid-template-columns: repeat(1, 1fr);
+	}
+}
+
+@media (min-width: 640px) and (max-width: 767.9px) {
+	.grid-container-title {
+		display: grid;
+		grid-template-columns: 20% 80%;
+		/* padding-left: 2rem;
+		padding-right: 2rem; */
+	}
+	.grid-container-title .title {
+		align-self: flex-start;
+	}
+}
+
+@media (min-width: 768px) and (max-width: 1023.9px) {
+	.grid-container-title {
+		display: grid;
+		grid-template-columns: 25% 75%;
+	}
+}
+
+@media (min-width: 1024px) {
+	.grid-container-title {
+		display: grid;
+		grid-template-columns: 15% 85%;
+	}
+}
+</style>
