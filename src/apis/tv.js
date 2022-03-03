@@ -9,56 +9,16 @@ export default (baseUrl, apiKey) => {
 		});
 
 	const apis = {
-		getListGenre: ({ language }) => {
+		getListPopulerTv: ({ language, page }) => {
 			const fetcher = createAxios();
 
-			return new Promise((resolve, reject) => {
+			return new Promise(async (resolve, reject) => {
 				try {
-					setTimeout(async () => {
+					// setTimeout(async () => {
 						resolve(
-							await fetcher.get(
-								`/genre/movie/list?api_key=${apiKey}&language=${language}`
-							)
+							await fetcher.get(`/tv/popular?api_key=${apiKey}&language=${language}&page=${page}`)
 						);
-					},3000);
-				} catch (error) {
-					console.log(error);
-					reject(error);
-				}
-			});
-		},
-
-		getPopulerTvSeries: ({ language, page }) => {
-			const fetcher = createAxios();
-
-			return new Promise((resolve, reject) => {
-				try {
-					setTimeout(async () => {
-						resolve(
-							await fetcher.get(
-								`/tv/popular?api_key=${apiKey}&language=${language}&page=${page}`
-							)
-						);
-					},3000);
-				} catch (error) {
-					console.log(error);
-					reject(error);
-				}
-			});
-		},
-
-		getPopulerMovieSeries: ({ language, page }) => {
-			const fetcher = createAxios();
-
-			return new Promise((resolve, reject) => {
-				try {
-					setTimeout(async () => {
-						resolve(
-							await fetcher.get(
-								`/movie/popular?api_key=${apiKey}&language=${language}&page=${page}`
-							)
-						);
-					}, 0);
+					// },5000);
 				} catch (error) {
 					console.log(error);
 					reject(error);
@@ -66,7 +26,70 @@ export default (baseUrl, apiKey) => {
 			});
 
 			// return fetcher
-			// 	.get(`/tv/popular?api_key=${apiKey}&language=${language}&page=${page}`)
+			// 	.then((response) => response)
+			// 	.catch((error) => {
+			// 		console.log(error);
+			// 		return null;
+			// 	});
+		},
+
+		getDetailTv: ({ language, tvId }) => {
+			const fetcher = createAxios();
+
+			return new Promise(async (resolve, reject) => {
+				try {
+					const response = 	await fetcher.get(`/tv/${tvId}?api_key=${apiKey}&language=${language}`)
+					resolve(response)
+				} catch (error) {
+					console.log(error);
+					reject(error);
+				}
+			});
+			// return fetcher
+			// 	.then((response) => response)
+			// 	.catch((error) => {
+			// 		console.log(error);
+			// 		return null;
+			// 	});
+		},
+
+		getImagesFromTv: ({ tvId, language, include_image_language }) => {
+			const fetcher = createAxios();
+			
+			return new Promise(async (resolve, reject) => {
+				try {
+					const response = 	await fetcher.get(
+						`/tv/${tvId}/images?api_key=${apiKey}&language=${language}&include_image_language=${include_image_language}`
+					)
+					resolve(response)
+				} catch (error) {
+					console.log(error);
+					reject(error);
+				}
+			});
+
+			// return fetcher
+			// 	.then((response) => response)
+			// 	.catch((error) => {
+			// 		console.log(error);
+			// 		return null;
+			// 	});
+		},
+
+		getVideosFromTv: ({ language, tvId }) => {
+			const fetcher = createAxios();
+
+			return new Promise(async (resolve, reject) => {
+				try {
+					const response = 	await fetcher.get(`/tv/${tvId}/videos?api_key=${apiKey}&language=${language}`)
+					resolve(response)
+				} catch (error) {
+					console.log(error);
+					reject(error);
+				}
+			});
+
+			// return fetcher
 			// 	.then((response) => response)
 			// 	.catch((error) => {
 			// 		console.log(error);
@@ -77,18 +100,3 @@ export default (baseUrl, apiKey) => {
 
 	return apis;
 };
-
-// export default async function useBerries() {
-//   const fetchBerries = () => {
-//     return new Promise((resolve) => {
-//       setTimeout(async () => {
-//         resolve((await fetch("https://pokeapi.co/api/v2/berry/")).json());
-//       }, 2000);
-//     });
-//   };
-
-//   const berries = ref();
-//   berries.value = await fetchBerries();
-
-//   return berries;
-// }
