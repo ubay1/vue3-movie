@@ -1,39 +1,66 @@
 <template>
 	<div>
-		{{names}}
+		<div class="mt-4">
+			<div v-for="(item) in dataGenre" :key="item.id">
+				{{item.name}}
+			</div>
+		</div>
+		
+		<div class="mt-4">
+			<div v-for="(item) in dataPopulerTv" :key="item.id">
+				{{item.name}}
+			</div>
+		</div>
+
+		<div class="mt-4">
+			<div v-for="(item) in dataPopulerMovie" :key="item.id">
+				{{item.original_title}}
+			</div>
+		</div>
 	</div>
 </template>
 
 <script>
-import axios from 'axios';
-import {computed, onMounted, ref} from 'vue';
+import { ref, onMounted } from "vue";
+import tv from "../../apis/tv";
+import Api from '@/apis';
+
 export default {
-	setup() {
-		const names = ref('ubay')
-		const data = ref([]) 
+	async setup() {
+		const dataGenre = ref();
+		const dataPopulerTv = ref();
+		const dataPopulerMovie = ref();
 
-		const compData = computed(() => {
-			return data.value
-		})
+		const api = () => {
+			return Api(
+				import.meta.env.VITE_API_URL,
+				import.meta.env.VITE_API_KEY_TMDB_V3
+			);
+		};
 
-		const getApi = () => {
-			axios.get('https://dog.ceo/api/breeds/image/random/3')
-			.then((res) => {
-				console.log(res.data.message);
-				data.value = res.data.message
-			}).finally(() => {
-				})
-		}
+		const getListGenre = await api().tv.getListGenre({
+			language: "en-US",
+		});
 
-		onMounted(()=>{
-			getApi()
-		})
+		const getTvPopuler = await api().tv.getPopulerTvSeries({
+			language: "en-US",
+			page: 1,
+		});
 
+		const getMoviePopuler = await api().tv.getPopulerMovieSeries({
+			language: "en-US",
+			page: 1,
+		});
+
+		dataGenre.value = getListGenre.data.genres;
+		dataPopulerTv.value = getTvPopuler.data.results;
+		dataPopulerMovie.value = getMoviePopuler.data.results;
 
 		return {
-			names,
-			compData,
-		}
-	}
-}
+			dataGenre,
+			dataPopulerTv,
+			dataPopulerMovie,
+		};
+	},
+};
 </script>

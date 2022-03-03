@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import Error from "@/layouts/Error.vue";
 
 const router = createRouter({
-	history: createWebHistory(import.meta.env.BASE_URL),
+	history: createWebHistory(import.meta.env.VITE_BASE_URL),
 	routes: [
 		{
 			path: "/:pathMatch(.*)*",
@@ -16,6 +16,9 @@ const router = createRouter({
 			path: "/",
 			name: "home",
 			component: () => import("../views/home/Home.vue"),
+			meta: {
+				reload: true,
+			},
 		},
 		{
 			path: "/detail/movie",

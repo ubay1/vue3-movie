@@ -1,6 +1,15 @@
 <template>
 	<LayoutDefault>
 		<div class="px-2 sm:px-6 lg:px-8">
+			<!-- <Suspense>
+				<template #default>
+					<Test />
+				</template>
+				<template #fallback>
+					<TestLoading />
+				</template>
+			</Suspense> -->
+			
 			<LoaderCircle v-if="isLoading" :is-loading="isLoading" class="mt-10" />
 
 			<div v-else class="flex flex-col">
@@ -175,6 +184,7 @@ import 'vue3-carousel/dist/carousel.css';
 import LayoutDefault from "@/layouts/Default.vue";
 import LoaderCircle from "@/components/atoms/loader/LoaderCircle.vue";
 import TestLoading from "@/components/atoms/TestLoading.vue";
+import Test from "@/components/atoms/Test.vue";
 import Api from "@/apis";
 import { useRouter } from "vue-router";
 
@@ -203,6 +213,8 @@ export default {
 		Carousel,
     Slide,
     Navigation,
+		Test,
+		TestLoading,
 	},
 	setup() {
 		const isOpen = ref(false);
@@ -215,10 +227,22 @@ export default {
 		const listPopularMovie = reactive([]);
 		const listPopularTvSeries = reactive([]);
 
+
 		const settings = reactive({
-      itemsToShow: 1,
+			itemsToShow: 1,
       snapAlign: 'center',
     })
+		
+		const dataGenre = ref();
+		const dataPopulerTv = ref();
+		const dataPopulerMovie = ref();
+
+		const api = () => {
+			return Api(
+				import.meta.env.VITE_API_URL,
+				import.meta.env.VITE_API_KEY_TMDB_V3
+			);
+		};
 
 		const breakpointsListGenre = ({
       // 700px and up
@@ -316,14 +340,8 @@ export default {
 				.finally(() => (isLoading.value = false));
 		};
 
-		// eslint-disable-next-line no-unused-vars
-		const getValue = (key, objectName) => {
-			const { [key]: returnValue } = objectName;
-			return returnValue;
-		};
-
 		const detailMovie = (item) => {
-			router.replace({
+			router.push({
 				path: "/detail/movie",
 				query: {
 					id: item.id,
@@ -333,7 +351,7 @@ export default {
 		};
 
 		const detailTv = (item) => {
-			router.replace({
+			router.push({
 				path: "/detail/tv",
 				query: {
 					id: item.id,
@@ -346,13 +364,6 @@ export default {
 			return `${import.meta.env.VITE_POSTER_IMAGE_URL}w342${poster_path}`;
 		};
 
-		const api = () => {
-			return Api(
-				import.meta.env.VITE_API_URL,
-				import.meta.env.VITE_API_KEY_TMDB_V3
-			);
-		};
-
 		onMounted(() => {
 			loadAllData();
 		});
@@ -362,6 +373,24 @@ export default {
 		onErrorCaptured((e) => {
 			errors.value = e;
 		})
+
+		// const getListGenre = await api().tv.getListGenre({
+		// 	language: "en-US",
+		// });
+
+		// const getTvPopuler = await api().tv.getPopulerTvSeries({
+		// 	language: "en-US",
+		// 	page: 1,
+		// });
+
+		// const getMoviePopuler = await api().tv.getPopulerMovieSeries({
+		// 	language: "en-US",
+		// 	page: 1,
+		// });
+
+		// dataGenre.value = getListGenre.data.genres;
+		// dataPopulerTv.value = getTvPopuler.data.results;
+		// dataPopulerMovie.value = getMoviePopuler.data.results;
 
 		return {
 			isOpen,
@@ -375,6 +404,9 @@ export default {
 			posterMovie,
 			detailMovie,
 			detailTv,
+			dataGenre,
+			dataPopulerTv,
+			dataPopulerMovie,
 		};
 	},
 };

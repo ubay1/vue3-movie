@@ -1,7 +1,7 @@
 <template>
 	<div class="flex items-center justify-center h-full">
 		<img
-			src="@/assets/images/loader2.gif"
+			src="https://cdn.dribbble.com/users/554559/screenshots/2537900/process_crop_1.gif"
 			alt=""
 			class="w-10"
 		/>
