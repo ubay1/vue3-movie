@@ -79,8 +79,6 @@ export default {
 			language: "en-US",
 		});
 
-		console.log(getListGenre);
-
 		dataListGenre.value = getListGenre.data.genres;
 
 		return {

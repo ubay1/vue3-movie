@@ -51,7 +51,7 @@
 								class="m-auto object-cover pointer-events-none rounded-md"
 							/>
 							<div class="title-movie rounded-md">
-								{{ item.original_title }}
+								{{ item.original_name }}
 							</div>
 						</div>
 					</button>
@@ -129,8 +129,6 @@ export default {
 			language: "en-US",
 			page: 1,
 		});
-
-		console.log(getListPopulerTv);
 
 		dataListPopulerTv.value = getListPopulerTv.data.results;
 

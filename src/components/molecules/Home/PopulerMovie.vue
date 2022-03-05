@@ -130,8 +130,6 @@ export default {
 			page: 1,
 		});
 
-		console.log(getListPopulerMovie);
-
 		dataListPopulerMovie.value = getListPopulerMovie.data.results;
 
 		return {

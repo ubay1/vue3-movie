@@ -85,7 +85,7 @@ export default (baseUrl, apiKey) => {
 				}
 			});
 
-			// return fetcher
+			// return fetcher.get(`/movie/${movieId}/images?api_key=${apiKey}&language=${language}&include_image_language=${include_image_language}`)
 			// 	.then((response) => response)
 			// 	.catch((error) => {
 			// 		console.log(error);
@@ -106,7 +106,7 @@ export default (baseUrl, apiKey) => {
 				}
 			});
 
-			// return fetcher
+			// return fetcher.get(`/movie/${movieId}/videos?api_key=${apiKey}&language=${language}`)
 			// 	.then((response) => response)
 			// 	.catch((error) => {
 			// 		console.log(error);
