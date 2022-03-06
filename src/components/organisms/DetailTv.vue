@@ -64,32 +64,32 @@ export default {
 
 		/* ------------------------------ API handling ------------------------------ */
 
-		const getDetailMovie = () => {
+		const getDetailTv = () => {
 			const params = {
 				language: "en-US",
-				movieId: route.query.id,
+				tvId: route.query.id,
 			};
 
-			return api().movie.getDetailMovie(params);
+			return api().tv.getDetailTv(params);
 		};
 
-		const getImagesFromMovie = () => {
+		const getImagesFromTv = () => {
 			const params = {
-				movieId: route.query.id,
+				tvId: route.query.id,
 				language: "en-US",
 				include_image_language: "en",
 			};
 
-			return api().movie.getImagesFromMovie(params);
+			return api().tv.getImagesFromTv(params);
 		};
 
-		const getVideosFromMovie = () => {
+		const getVideosFromTv = () => {
 			const params = {
 				language: "en-US",
-				movieId: route.query.id,
+				tvId: route.query.id,
 			};
 
-			return api().movie.getVideosFromMovie(params);
+			return api().tv.getVideosFromTv(params);
 		};
 
 		const loadAllApi = () => {
@@ -97,11 +97,12 @@ export default {
 			isLoadingListVideo.value = true;
 
 			Promise.all([
-				getImagesFromMovie(),
-				getDetailMovie(),
-				getVideosFromMovie(),
+				getImagesFromTv(),
+				getDetailTv(),
+				getVideosFromTv(),
 			])
 				.then(([imagesMovie, detailMovie, videosMovie]) => {
+
 					const {
 						data: { posters },
 					} = imagesMovie;
