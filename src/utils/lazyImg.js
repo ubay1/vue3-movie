@@ -1,18 +1,21 @@
 export default function (Vue) {
-	Vue.directive("lazy", {
-		mounted(el, { value }) {
+	Vue.directive("lazy-img", {
+		mounted(el, binding) { // binding
 			const animClasses = ["fadeInLeft", "fadeInRight", "fadeInBtm", "zoomIn"];
 			const classImg = ["w-full", "h-full", "z-10"];
 
-			if (/\S+/.test(value)) {
+			// console.log(el)
+
+			if (/\S+/.test(binding.value)) {
 				const observer = new IntersectionObserver(
 					(entries) => {
 						entries.forEach((entry) => {
+							// console.log(entry)
 							if (entry && entry.isIntersecting) {
 								if (el.tagName === "IMG") {
 									setTimeout(() => {
 										el.classList.remove("bg-loader");
-										el.src = value;
+										el.src = binding.value;
 										el.classList.add(animClasses[0]);
 										el.classList.add(classImg[0]);
 										el.classList.add(classImg[1]);

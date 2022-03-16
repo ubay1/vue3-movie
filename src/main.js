@@ -4,7 +4,7 @@ import App from "./App.vue";
 import router from "./router";
 import { createI18n } from "vue-i18n";
 import { createHead } from "@vueuse/head";
-import Lazy from "@/utils/lazy.js";
+import LazyImg from "@/utils/lazyImg.js";
 
 import "./assets/global.css";
 import "./assets/tailwind.css";
@@ -30,6 +30,6 @@ const app = createApp(App);
 app.use(i18n);
 app.use(router);
 app.use(head);
-app.use(Lazy);
+app.use(LazyImg);
 
 app.mount("#app");

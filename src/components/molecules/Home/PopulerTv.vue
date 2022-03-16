@@ -1,11 +1,11 @@
 <template>
 		<div class="mb-8">
 			<div class="flex justify-between items-center md:px-3">
-				<div class="font-extrabold text-xl">TV Series Terpopuler</div>
+				<div class="font-extrabold text-xl">Popular Tv Series</div>
 				<button
 					class="bg-red-400 hover:bg-red-500 text-white rounded-md p-1 px-2 text-sm"
 				>
-					Lihat Semua
+					Open All
 				</button>
 			</div>
 			<div class="mt-2 hidden md:block">
@@ -19,7 +19,7 @@
 								class="shimmer-image bg-gray-200 dark:bg-gray-400 flex items-center rounded-md"
 							>
 								<img
-									v-lazy="posterMovie(item.poster_path)"
+									v-lazy-img="posterMovie(item.poster_path)"
 									alt=""
 									class="m-auto object-cover pointer-events-none rounded-md"
 								/>
@@ -46,7 +46,7 @@
 							class="shimmer-image bg-gray-200 dark:bg-gray-400 flex items-center rounded-md"
 						>
 							<img
-								v-lazy="posterMovie(item.poster_path)"
+								v-lazy-img="posterMovie(item.poster_path)"
 								alt=""
 								class="m-auto object-cover pointer-events-none rounded-md"
 							/>

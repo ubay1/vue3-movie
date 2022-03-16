@@ -13,13 +13,13 @@
 						<img
 							:src="thumbnailImagePoster()"
 							alt="backdrop-image-movie"
-							class="h-full w-full object-cover"
+							class="h-full w-full object-cover pointer-events-none"
 						/>
 					</div>
 					<div class="w-full md:w-2/3">
 						<div class="flex flex-col gap-2">
 							<div class="grid-container-title">
-								<div class="title">Negara:</div>
+								<div class="title font-bold">Country:</div>
 								<div class="flex gap-x-2 flex-wrap">
 									<div
 										v-for="(item, index) in dataMovie.production_countries"
@@ -35,7 +35,7 @@
 								</div>
 							</div>
 							<div class="grid-container-title">
-								<div class="title">Genre Film:</div>
+								<div class="title font-bold">Genres:</div>
 								<div class="flex gap-x-2 flex-wrap">
 									<div
 										v-for="(item, index) in dataMovie.genres"
@@ -51,15 +51,15 @@
 								</div>
 							</div>
 							<div class="grid-container-title">
-								<div class="title">Diterbitkan:</div>
-								<div>{{ dataMovie.release_date }}</div>
+								<div class="title font-bold">Release:</div>
+								<div>{{ checkReleaseDate(dataMovie) }}</div>
 							</div>
 							<div class="grid-container-title">
-								<div class="title">Budget:</div>
-								<div>{{ formatCurrency(dataMovie.budget) }}</div>
+								<div class="title font-bold">Budget:</div>
+								<div>{{ checkBudget(dataMovie) }}</div>
 							</div>
 							<div class="grid-container-title">
-								<div class="title">Synopsis:</div>
+								<div class="title font-bold">Synopsis:</div>
 								<div>{{ dataMovie.overview }}</div>
 							</div>
 						</div>
@@ -103,6 +103,22 @@ export default {
 			}
 		};
 
+		const checkReleaseDate = (data) => {
+			if(["",null, undefined].includes(data.release_date)) {
+				return data.first_air_date
+			 } else {
+				return data.release_date
+			 }
+		}
+
+		const checkBudget = (data) => {
+			if(["",null, undefined].includes(data.budget)) {
+				return "-";
+			} else {
+				return formatCurrency(data.budget)
+			}
+		}
+
 		const checkCommaOrPoint = (dataLength, index) => {
 			return dataLength > 1 && index !== dataLength - 1 ? "," : ".";
 		};
@@ -110,7 +126,9 @@ export default {
 		return {
 			thumbnailImagePoster,
 			checkCommaOrPoint,
-			formatCurrency
+			formatCurrency,
+			checkReleaseDate,
+			checkBudget,
 		}
 	},
 };

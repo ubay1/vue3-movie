@@ -53,8 +53,8 @@
 							<div class="w-1/2 sm:w-1/4 md:w-1/2 lg:w-1/3 h-full">
 								<div class="h-full border-0">
 									<img
-										v-lazy="thumbnailImageVideo()"
-										class="bg-gray-200 dark:bg-gray-400 img-lazy w-full h-full object-cover object-top"
+										v-lazy-img="thumbnailImageVideo()"
+										class="bg-gray-200 dark:bg-gray-400 img-lazy w-full h-full object-cover object-top pointer-events-none"
 									/>
 								</div>
 							</div>
