@@ -1,47 +1,20 @@
 <template>
-		<div class="mb-8">
-			<div class="flex justify-between items-center md:px-3">
-				<div class="font-extrabold text-xl">Popular Tv Series</div>
-				<button
-					class="bg-red-400 hover:bg-red-500 text-white rounded-md p-1 px-2 text-sm"
-				>
-					Open All
-				</button>
-			</div>
-			<div class="mt-2 hidden md:block">
-				<Carousel :breakpoints="breakpointsListPopularTv">
-					<Slide
-						v-for="(item, index) in dataListPopulerTv"
-						:key="`list populer movie ${index}`"
-					>
-						<button class="w-full poster-movie" @click="detailTv(item)">
-							<div
-								class="shimmer-image bg-gray-200 dark:bg-gray-400 flex items-center rounded-md"
-							>
-								<img
-									v-lazy-img="posterMovie(item.poster_path)"
-									alt=""
-									class="m-auto object-cover pointer-events-none rounded-md"
-								/>
-								<div class="title-movie rounded-md">
-									{{ item.original_name }}
-								</div>
-							</div>
-						</button>
-					</Slide>
-
-					<template #addons>
-						<Navigation />
-					</template>
-				</Carousel>
-			</div>
-			<div class="flex mt-4 overflow-x-auto md:hidden">
-				<div
+	<div class="mb-8">
+		<div class="flex justify-between items-center md:px-3">
+			<div class="font-extrabold text-xl">Popular Tv Series</div>
+			<button
+				class="bg-red-400 hover:bg-red-500 text-white rounded-md p-1 px-2 text-sm"
+			>
+				Open All
+			</button>
+		</div>
+		<div class="mt-2 hidden md:block" ref="detectCompPopulerTv">
+			<Carousel :breakpoints="breakpointsListPopularTv">
+				<Slide
 					v-for="(item, index) in dataListPopulerTv"
-					:key="`list populer movie - ${index}`"
-					class="display-movie"
+					:key="`list populer movie ${index}`"
 				>
-					<button class="mr-2 mb-2 poster-movie" @click="detailTv(item)">
+					<button class="w-full poster-movie" @click="detailTv(item)">
 						<div
 							class="shimmer-image bg-gray-200 dark:bg-gray-400 flex items-center rounded-md"
 						>
@@ -55,14 +28,41 @@
 							</div>
 						</div>
 					</button>
-				</div>
+				</Slide>
+
+				<template #addons>
+					<Navigation />
+				</template>
+			</Carousel>
+		</div>
+		<div class="flex mt-4 overflow-x-auto md:hidden" ref="detectCompPopulerTv">
+			<div
+				v-for="(item, index) in dataListPopulerTv"
+				:key="`list populer movie - ${index}`"
+				class="display-movie"
+			>
+				<button class="mr-2 mb-2 poster-movie" @click="detailTv(item)">
+					<div
+						class="shimmer-image bg-gray-200 dark:bg-gray-400 flex items-center rounded-md"
+					>
+						<img
+							v-lazy-img="posterMovie(item.poster_path)"
+							alt=""
+							class="m-auto object-cover pointer-events-none rounded-md"
+						/>
+						<div class="title-movie rounded-md">
+							{{ item.original_name }}
+						</div>
+					</div>
+				</button>
 			</div>
 		</div>
+	</div>
 </template>
 
 <script>
 // eslint-disable-next-line no-unused-vars
-import { ref, toRefs, onMounted } from "vue";
+import { ref, toRefs, onMounted, onBeforeUnmount } from "vue";
 import { Carousel, Navigation, Slide } from "vue3-carousel";
 import "vue3-carousel/dist/carousel.css";
 import Api from "@/apis";
@@ -76,8 +76,38 @@ export default {
 	},
 	async setup() {
 		const dataListPopulerTv = ref();
+		const detectCompPopulerTv = ref(null);
 
 		const router = useRouter();
+
+		onMounted(() => {
+			const currPos = localStorage.getItem("scrollHorizontalPositionPopulerTv");
+			detectCompPopulerTv.value.scrollTo(currPos, 0);
+
+			detectCompPopulerTv.value.addEventListener(
+				"scroll",
+				() => {
+					const scrollPosition = detectCompPopulerTv.value.scrollLeft;
+					handleScroll(scrollPosition);
+				},
+				false
+			);
+		});
+
+		const handleScroll = (positionScroll) => {
+			localStorage.setItem("scrollHorizontalPositionPopulerTv", positionScroll);
+		};
+
+		onBeforeUnmount(() => {
+			detectCompPopulerTv.value.addEventListener(
+				"scroll",
+				() => {
+					const scrollPosition = detectCompPopulerTv.value.scrollLeft;
+					handleScroll(scrollPosition);
+				},
+				false
+			);
+		});
 
 		const breakpointsListPopularTv = {
 			// 700px and up
@@ -134,6 +164,7 @@ export default {
 
 		return {
 			dataListPopulerTv,
+			detectCompPopulerTv,
 			breakpointsListPopularTv,
 			posterMovie,
 			detailTv,

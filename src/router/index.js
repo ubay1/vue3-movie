@@ -18,6 +18,8 @@ const router = createRouter({
 			component: () => import("../views/home/Home.vue"),
 			meta: {
 				reload: true,
+				layout: "layout-default",
+				keepAlive: true,
 			},
 		},
 		{
@@ -26,6 +28,8 @@ const router = createRouter({
 			component: () => import("../views/detail/Movie.vue"),
 			meta: {
 				reload: true,
+				layout: "layout-default",
+				keepAlive: false,
 			},
 		},
 		{
@@ -34,6 +38,8 @@ const router = createRouter({
 			component: () => import("../views/detail/Tv.vue"),
 			meta: {
 				reload: true,
+				layout: "layout-default",
+				keepAlive: false,
 			},
 		},
 	],

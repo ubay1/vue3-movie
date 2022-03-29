@@ -1,40 +1,35 @@
 <template>
-	<LayoutDefault>
-		<div class="flex flex-col justify-between gap-4 mx-4 mt-4 md:h-1/2">
-			<ListVideos 
-				:dataMainVideos="compDataMainVideos"
-				:isLoading="compIsLoading"
-				:isLoadingListVideo="compIsLoadingListVideo"
-				:indexMainVideos="indexMainVideos"
-				:backdropImageMovie="compBackdropImage"
-				:dataListVideos="dataVideos"
-				@changeMainVideo="changeMainVideo"
-			/>
-			<DescriptMovie 
-				:isLoadingListVideo="compIsLoadingListVideo"
-				:dataMovie="compDataMovie"
-				:posterImageMovie="compPosterImageMovie"
-			/>
-		</div>
-	</LayoutDefault>
+	<div class="flex flex-col justify-between gap-4 mx-4 mt-4 md:h-1/2">
+		<ListVideos
+			:dataMainVideos="compDataMainVideos"
+			:isLoading="compIsLoading"
+			:isLoadingListVideo="compIsLoadingListVideo"
+			:indexMainVideos="indexMainVideos"
+			:backdropImageMovie="compBackdropImage"
+			:dataListVideos="dataVideos"
+			@changeMainVideo="changeMainVideo"
+		/>
+		<DescriptMovie
+			:isLoadingListVideo="compIsLoadingListVideo"
+			:dataMovie="compDataMovie"
+			:posterImageMovie="compPosterImageMovie"
+		/>
+	</div>
 </template>
 
 <script>
 // eslint-disable-next-line no-unused-vars
 import { ref, reactive, toRefs, onMounted, watch, computed } from "vue";
-import LayoutDefault from "@/layouts/Default.vue";
 import ListVideos from "../molecules/DetailMovie/ListVideos.vue";
 import { useRoute } from "vue-router";
 import Api from "@/apis";
 import DescriptMovie from "../molecules/DetailMovie/DescriptMovie.vue";
 
-
 export default {
 	components: {
-    LayoutDefault,
-    ListVideos,
-    DescriptMovie
-},
+		ListVideos,
+		DescriptMovie,
+	},
 	setup() {
 		const isLoading = ref(false);
 		const isLoadingListVideo = ref(false);
@@ -52,7 +47,7 @@ export default {
 		/*                                   method                                   */
 		/* -------------------------------------------------------------------------- */
 
-		const changeMainVideo = ({data, idx}) => {
+		const changeMainVideo = ({ data, idx }) => {
 			isLoading.value = true;
 			dataMainVideos.value = {};
 			dataMainVideos.value = data;
@@ -96,13 +91,8 @@ export default {
 			isLoading.value = true;
 			isLoadingListVideo.value = true;
 
-			Promise.all([
-				getImagesFromTv(),
-				getDetailTv(),
-				getVideosFromTv(),
-			])
+			Promise.all([getImagesFromTv(), getDetailTv(), getVideosFromTv()])
 				.then(([imagesMovie, detailMovie, videosMovie]) => {
-
 					const {
 						data: { posters },
 					} = imagesMovie;
@@ -181,7 +171,7 @@ export default {
 		});
 
 		const compIsLoadingListVideo = computed(() => {
-			return isLoadingListVideo.value
+			return isLoadingListVideo.value;
 		});
 		/* -------------------------------------------------------------------------- */
 		/*                                 watchEffecter                                    */
@@ -193,8 +183,10 @@ export default {
 		/* -------------------------------------------------------------------------- */
 		backdropImageMovie.value = route.query.image;
 		loadAllApi();
-		// onMounted(() => {
-		// });
+
+		onMounted(() => {
+			window.scrollTo({ left: 0, top: 0, behavior: "smooth" });
+		});
 
 		return {
 			compIsLoading,
@@ -215,6 +207,6 @@ export default {
 			// thumbnailImageVideo,
 			// formatCurrency,
 		};
-	}
+	},
 };
 </script>

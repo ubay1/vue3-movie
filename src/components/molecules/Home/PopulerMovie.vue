@@ -8,7 +8,7 @@
 				Open All
 			</button>
 		</div>
-		<div class="mt-2 hidden md:block">
+		<div class="mt-2 hidden md:block" ref="detectCompPopulerMovie">
 			<Carousel :breakpoints="breakpointsListPopularMovie">
 				<Slide
 					v-for="(item, index) in dataListPopulerMovie"
@@ -35,7 +35,10 @@
 				</template>
 			</Carousel>
 		</div>
-		<div class="flex mt-4 overflow-x-auto md:hidden">
+		<div
+			class="flex mt-4 overflow-x-auto md:hidden"
+			ref="detectCompPopulerMovie"
+		>
 			<div
 				v-for="(item, index) in dataListPopulerMovie"
 				:key="`list populer movie - ${index}`"
@@ -62,7 +65,7 @@
 
 <script>
 // eslint-disable-next-line no-unused-vars
-import { ref, toRefs, onMounted } from "vue";
+import { ref, toRefs, onMounted, onBeforeUnmount } from "vue";
 import { Carousel, Navigation, Slide } from "vue3-carousel";
 import "vue3-carousel/dist/carousel.css";
 import Api from "@/apis";
@@ -76,8 +79,43 @@ export default {
 	},
 	async setup() {
 		const dataListPopulerMovie = ref();
+		const detectCompPopulerMovie = ref(null);
 
 		const router = useRouter();
+
+		onMounted(() => {
+			const currPos = localStorage.getItem(
+				"scrollHorizontalPositionPopulerMovie"
+			);
+			detectCompPopulerMovie.value.scrollTo(currPos, 0);
+
+			detectCompPopulerMovie.value.addEventListener(
+				"scroll",
+				() => {
+					const scrollPosition = detectCompPopulerMovie.value.scrollLeft;
+					handleScroll(scrollPosition);
+				},
+				false
+			);
+		});
+
+		const handleScroll = (positionScroll) => {
+			localStorage.setItem(
+				"scrollHorizontalPositionPopulerMovie",
+				positionScroll
+			);
+		};
+
+		onBeforeUnmount(() => {
+			detectCompPopulerMovie.value.addEventListener(
+				"scroll",
+				() => {
+					const scrollPosition = detectCompPopulerMovie.value.scrollLeft;
+					handleScroll(scrollPosition);
+				},
+				false
+			);
+		});
 
 		const breakpointsListPopularMovie = {
 			// 700px and up
@@ -134,6 +172,7 @@ export default {
 
 		return {
 			dataListPopulerMovie,
+			detectCompPopulerMovie,
 			breakpointsListPopularMovie,
 			posterMovie,
 			detailMovie,
