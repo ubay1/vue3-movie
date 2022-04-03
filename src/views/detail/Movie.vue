@@ -6,22 +6,18 @@
 // eslint-disable-next-line no-unused-vars
 import { ref, reactive, toRefs, onMounted, watch, computed } from "vue";
 import { useRoute } from "vue-router";
-import LayoutDefault from "@/layouts/Default.vue";
 import LoaderCircle from "@/components/atoms/loader/LoaderCircle.vue";
 import Api from "@/apis";
-import { formatCurrency } from "../../utils/currency";
-import DetailMovieOrganisms from "../../components/organisms/DetailMovie.vue";
+import { formatCurrency } from "@/utils/currency";
+import DetailMovieOrganisms from "@/components/organisms/DetailMovie.vue";
 // import axios from "axios";
 
 export default {
 	components: {
-    LayoutDefault,
-    LoaderCircle,
-    DetailMovieOrganisms
+		LoaderCircle,
+		DetailMovieOrganisms,
 	},
-	setup() {
-
-	},
+	setup() {},
 };
 </script>
 

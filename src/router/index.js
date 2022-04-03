@@ -19,27 +19,33 @@ const router = createRouter({
 			meta: {
 				reload: true,
 				layout: "layout-default",
-				keepAlive: true,
+			},
+		},
+		{
+			path: "/detail/movie/genre",
+			name: "detail-movie-genre",
+			component: () => import("../views/detail/MovieListFromGenre.vue"),
+			meta: {
+				reload: true,
+				layout: "layout-default",
 			},
 		},
 		{
 			path: "/detail/movie",
-			name: "detail/movie",
+			name: "detail-movie",
 			component: () => import("../views/detail/Movie.vue"),
 			meta: {
 				reload: true,
 				layout: "layout-default",
-				keepAlive: false,
 			},
 		},
 		{
 			path: "/detail/tv",
-			name: "detail/tv",
+			name: "detail-tv",
 			component: () => import("../views/detail/Tv.vue"),
 			meta: {
 				reload: true,
 				layout: "layout-default",
-				keepAlive: false,
 			},
 		},
 	],

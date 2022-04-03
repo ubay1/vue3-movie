@@ -10,7 +10,6 @@ import LayoutDefault from "@/layouts/Default.vue";
 import "./assets/global.css";
 import "./assets/tailwind.css";
 
-
 import en from "./locales/en";
 import id from "./locales/id";
 
@@ -29,7 +28,7 @@ const i18n = createI18n({
 
 const head = createHead();
 const app = createApp(App);
-app.component('layout-default', LayoutDefault);
+app.component("layout-default", LayoutDefault);
 app.use(i18n);
 app.use(router);
 app.use(head);

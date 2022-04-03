@@ -18,9 +18,6 @@ import { RouterView } from "vue-router";
 import { onMounted } from "vue";
 export default {
 	computed: {
-		isKeepAlive() {
-			return this.$route.meta.keepAlive;
-		},
 		layout() {
 			return this.$route.meta.layout;
 		},

@@ -1,5 +1,5 @@
 <template>
-	<DetailTvOrganisms />
+	<MovieListFromGenreOrganisms />
 </template>
 
 <script>
@@ -7,17 +7,17 @@
 import { ref, reactive, toRefs, onMounted, watch, computed } from "vue";
 import { useRoute } from "vue-router";
 import LoaderCircle from "@/components/atoms/loader/LoaderCircle.vue";
-import Api from "@/apis";
-import { formatCurrency } from "@/utils/currency";
-import DetailTvOrganisms from "@/components/organisms/DetailTv.vue";
+import MovieListFromGenreOrganisms from "@/components/organisms/MovieListFromGenre.vue";
 // import axios from "axios";
 
 export default {
 	components: {
 		LoaderCircle,
-		DetailTvOrganisms,
+		MovieListFromGenreOrganisms,
 	},
-	setup() {},
+	setup() {
+		return {};
+	},
 };
 </script>
 
