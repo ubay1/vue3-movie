@@ -1,10 +1,10 @@
 <template>
 	<div>
-		<div class="display-container p-4 pb-2">
+		<div class="movie-genre-container p-4 pb-2">
 			<div
 				v-for="(item, index) in compDataMovie"
 				:key="`list populer movie - ${index}`"
-				class="display-movie"
+				class="movie-genre-list"
 			>
 				<button class="poster-movie" @click="detailMovie(item)">
 					<div
@@ -15,20 +15,20 @@
 							alt=""
 							class="m-auto object-cover pointer-events-none rounded-md"
 						/>
-						<div class="title-movie rounded-md">
+						<div class="movie-genre-title rounded-md">
 							{{ item.original_title }}
 						</div>
 					</div>
 				</button>
 			</div>
-			<div class="pb-2 flex justify-center loadmore">
-				<button
-					@click="loadMoreMovie()"
-					class="bg-red-400 hover:bg-red-500 text-white rounded-md p-1 px-2 text-sm w-full"
-				>
-					Load More
-				</button>
-			</div>
+		</div>
+		<div class="px-4 py-2 w-40 m-auto flex justify-center loadmore">
+			<button
+				@click="loadMoreMovie()"
+				class="bg-red-400 hover:bg-red-500 text-white rounded-md p-1 px-2 text-sm w-full"
+			>
+				Load More
+			</button>
 		</div>
 	</div>
 </template>
@@ -40,7 +40,7 @@ import Api from "@/apis";
 
 export default {
 	components: {},
-	setup() {
+	async setup() {
 		const genreId = ref();
 		const currPage = ref(1);
 		const dataMovie = ref(null);
@@ -62,7 +62,14 @@ export default {
 		/* -------------------------------------------------------------------------- */
 		const loadMoreMovie = async () => {
 			currPage.value += 1;
-			getMovieFromGenre();
+			const res = await api().movie.getMovieFromGenre({
+				language: "en-US",
+				page: currPage.value,
+				with_genres: genreId.value,
+			});
+			res.data.results.map((item) => {
+				dataMovie.value.push(item);
+			});
 		};
 
 		const api = () => {
@@ -72,21 +79,15 @@ export default {
 			);
 		};
 
-		const getMovieFromGenre = async () => {
-			const res = await api().movie.getMovieFromGenre({
-				language: "en-US",
-				page: currPage.value,
-				with_genres: genreId.value,
-			});
+		const getMovieFromGenre = await api().movie.getMovieFromGenre({
+			language: "en-US",
+			page: currPage.value,
+			with_genres: genreId.value,
+		});
 
-			if (dataMovie.value === null) {
-				dataMovie.value = res.data.results;
-			} else {
-				res.data.results.map((item) => {
-					dataMovie.value.push(item);
-				});
-			}
-		};
+		if (dataMovie.value === null) {
+			dataMovie.value = getMovieFromGenre.data.results;
+		}
 
 		const detailMovie = (item) => {
 			router.push({
@@ -105,9 +106,6 @@ export default {
 		/* -------------------------------------------------------------------------- */
 		/*                                  lifecycle                                 */
 		/* -------------------------------------------------------------------------- */
-		onMounted(() => {
-			getMovieFromGenre();
-		});
 
 		return {
 			genreId,
@@ -121,4 +119,73 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+.movie-genre-container {
+	display: grid;
+	grid-template-columns: repeat(5, 1fr);
+	gap: 20px;
+
+	.movie-genre-list {
+		display: grid;
+		grid-template-columns: 100% !important;
+	}
+	.movie-genre-title {
+		background: url("https://s8.indexmovies.xyz/wp-content/themes/dunia21/images/mask-title.png")
+			center top repeat-x;
+		bottom: 0;
+		left: 0;
+		padding: 10px 5px;
+		position: absolute;
+		width: 100%;
+		z-index: 20;
+		color: #fff;
+		text-align: center;
+		/* font-size: 80%; */
+		font-weight: 500;
+		margin: 0;
+		text-shadow: 0 0 2px #000;
+	}
+}
+.loadmore {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+@media (min-width: 768px) and (max-width: 991.9px) {
+	.movie-genre-container {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		gap: 20px;
+	}
+}
+
+@media (min-width: 582px) and (max-width: 767.9px) {
+	.movie-genre-container {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 20px;
+	}
+}
+
+@media (min-width: 424px) and (max-width: 581.9px) {
+	.movie-genre-container {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 20px;
+
+		// .movie-genre-list {
+		// 	display: flex;
+		// 	justify-content: space-between;
+		// }
+	}
+}
+
+@media (min-width: 0px) and (max-width: 423.9px) {
+	.movie-genre-container {
+		display: grid;
+		grid-template-columns: repeat(1, 1fr);
+		gap: 20px;
+	}
+}
+</style>
