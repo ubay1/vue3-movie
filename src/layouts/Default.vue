@@ -9,7 +9,7 @@
 
 <script>
 import { provide, reactive } from "vue";
-import Navbar from "@/components/organisms/Navbar.vue";
+import Navbar from "@/components/atoms/Navbar.vue";
 
 export default {
 	components: {

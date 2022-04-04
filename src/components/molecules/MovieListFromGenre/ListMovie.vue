@@ -22,10 +22,10 @@
 				</button>
 			</div>
 		</div>
-		<div class="px-4 py-2 w-40 m-auto flex justify-center loadmore">
+		<div class="p-4 m-auto flex justify-center loadmore">
 			<button
 				@click="loadMoreMovie()"
-				class="bg-red-400 hover:bg-red-500 text-white rounded-md p-1 px-2 text-sm w-full"
+				class="bg-red-400 hover:bg-red-500 text-white rounded-md p-1 px-2 text-sm w-28"
 			>
 				Load More
 			</button>
@@ -168,7 +168,7 @@ export default {
 	}
 }
 
-@media (min-width: 424px) and (max-width: 581.9px) {
+@media (min-width: 320px) and (max-width: 581.9px) {
 	.movie-genre-container {
 		display: grid;
 		grid-template-columns: repeat(2, 1fr);
@@ -181,7 +181,7 @@ export default {
 	}
 }
 
-@media (min-width: 0px) and (max-width: 423.9px) {
+@media (min-width: 0px) and (max-width: 319.9px) {
 	.movie-genre-container {
 		display: grid;
 		grid-template-columns: repeat(1, 1fr);
