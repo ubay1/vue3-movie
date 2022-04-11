@@ -201,7 +201,9 @@ export default {
 		loadAllApi();
 
 		onMounted(() => {
-			window.scrollTo({ left: 0, top: 0, behavior: "smooth" });
+			setTimeout(() => {
+				window.scrollTo({ left: 0, top: 0, behavior: "smooth" });
+			}, 200);
 		});
 
 		return {

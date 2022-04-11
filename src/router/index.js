@@ -49,6 +49,14 @@ const router = createRouter({
 			},
 		},
 	],
+	// scrollBehavior(to, from, savedPosition) {
+	// 	console.log(savedPosition);
+	// 	if (savedPosition) {
+	// 		return savedPosition;
+	// 	} else {
+	// 		return { x: 0, y: 0 };
+	// 	}
+	// },
 });
 
 export default router;

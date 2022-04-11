@@ -49,7 +49,10 @@ export default {
 	setup() {
 		onMounted(() => {
 			const currPos = localStorage.getItem("scrollVerticalPositionHome");
-			window.scrollTo({ left: 0, top: currPos, behavior: "smooth" });
+			setTimeout(() => {
+				window.scrollTo({ left: 0, top: currPos, behavior: "smooth" });
+			}, 200);
+
 			window.addEventListener("scroll", handleScroll);
 		});
 
