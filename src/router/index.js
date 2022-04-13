@@ -31,6 +31,24 @@ const router = createRouter({
 			},
 		},
 		{
+			path: "/detail/movie/populer",
+			name: "detail-movie-populer",
+			component: () => import("../views/detail/MovieListPopuler.vue"),
+			meta: {
+				reload: true,
+				layout: "layout-default",
+			},
+		},
+		{
+			path: "/detail/tv/populer",
+			name: "detail-tv-populer",
+			component: () => import("../views/detail/TvListPopuler.vue"),
+			meta: {
+				reload: true,
+				layout: "layout-default",
+			},
+		},
+		{
 			path: "/detail/movie",
 			name: "detail-movie",
 			component: () => import("../views/detail/Movie.vue"),

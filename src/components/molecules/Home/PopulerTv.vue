@@ -3,6 +3,7 @@
 		<div class="flex justify-between items-center md:px-3">
 			<div class="font-extrabold text-xl">Popular Tv Series</div>
 			<button
+				@click="openPopulerTv"
 				class="bg-red-400 hover:bg-red-500 text-white rounded-md p-1 px-2 text-sm"
 			>
 				Open All
@@ -144,6 +145,12 @@ export default {
 			});
 		};
 
+		const openPopulerTv = () => {
+			router.push({
+				path: "/detail/tv/populer",
+			});
+		};
+
 		const posterMovie = (poster_path) => {
 			return `${import.meta.env.VITE_POSTER_IMAGE_URL}w342${poster_path}`;
 		};
@@ -168,6 +175,7 @@ export default {
 			breakpointsListPopularTv,
 			posterMovie,
 			detailTv,
+			openPopulerTv,
 		};
 	},
 };

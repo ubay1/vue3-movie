@@ -7,7 +7,7 @@
 					:key="`list-genre ${index}`"
 				>
 					<button
-						@click="gotoMovieList(item.id)"
+						@click="openGenreMovie(item.id)"
 						class="w-full h-full cursor-pointer bg-gray-600 hover:bg-gray-700 text-white dark:bg-white dark:hover:bg-gray-100 dark:text-gray-800 p-2 rounded-md whitespace-nowrap text-ellipsis overflow-hidden"
 					>
 						{{ item.name }}
@@ -26,7 +26,7 @@
 					:key="`list-genre ${index}`"
 				>
 					<button
-						@click="gotoMovieList(item.id)"
+						@click="openGenreMovie(item.id)"
 						class="flex justify-center items-center cursor-pointer bg-gray-600 hover:bg-gray-700 text-white dark:bg-white dark:hover:bg-gray-100 dark:text-gray-800 p-2 rounded-md mr-2 mb-2 whitespace-nowrap text-ellipsis overflow-hidden"
 					>
 						{{ item.name }}
@@ -88,7 +88,7 @@ export default {
 
 		dataListGenre.value = getListGenre.data.genres;
 
-		const gotoMovieList = (id) => {
+		const openGenreMovie = (id) => {
 			router.push({
 				path: "/detail/movie/genre",
 				query: {
@@ -100,7 +100,7 @@ export default {
 		return {
 			dataListGenre,
 			breakpointsListGenre,
-			gotoMovieList,
+			openGenreMovie,
 		};
 	},
 };

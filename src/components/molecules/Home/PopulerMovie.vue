@@ -3,6 +3,7 @@
 		<div class="flex justify-between items-center md:px-3">
 			<div class="font-extrabold text-xl">Popular Movie</div>
 			<button
+				@click="openPopulerMovie"
 				class="bg-red-400 hover:bg-red-500 text-white rounded-md p-1 px-2 text-sm"
 			>
 				Open All
@@ -152,6 +153,12 @@ export default {
 			});
 		};
 
+		const openPopulerMovie = () => {
+			router.push({
+				path: "/detail/movie/populer",
+			});
+		};
+
 		const posterMovie = (poster_path) => {
 			return `${import.meta.env.VITE_POSTER_IMAGE_URL}w342${poster_path}`;
 		};
@@ -176,6 +183,7 @@ export default {
 			breakpointsListPopularMovie,
 			posterMovie,
 			detailMovie,
+			openPopulerMovie,
 		};
 	},
 };
