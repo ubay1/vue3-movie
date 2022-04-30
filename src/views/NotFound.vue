@@ -10,7 +10,7 @@
 				alt=""
 				class="pointer-events-none"
 			/>
-			<div class="text-white">{{ $t("page.notFound") }}</div>
+			<div class="text-white">Page not found</div>
 		</div>
 	</Error>
 </template>

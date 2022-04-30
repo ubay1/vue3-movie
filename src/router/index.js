@@ -15,7 +15,16 @@ const router = createRouter({
 		{
 			path: "/",
 			name: "home",
-			component: () => import("../views/home/Home.vue"),
+			component: () => import("../views/Home.vue"),
+			meta: {
+				reload: true,
+				layout: "layout-default",
+			},
+		},
+		{
+			path: "/search-movie",
+			name: "searchmovie",
+			component: () => import("../views/SearchMovie.vue"),
 			meta: {
 				reload: true,
 				layout: "layout-default",

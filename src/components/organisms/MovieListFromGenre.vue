@@ -14,8 +14,8 @@
 <script>
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
-import Loading from "@/components/molecules/MovieListFromGenre/Loading.vue";
-import ListMovie from "@/components/molecules/MovieListFromGenre/ListMovie.vue";
+import Loading from "../molecules/MovieListFromGenre/Loading.vue";
+import ListMovie from "../molecules/MovieListFromGenre/ListMovie.vue";
 
 export default {
 	components: {

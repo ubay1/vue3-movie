@@ -1,9 +1,6 @@
 <template>
 	<!-- navbar default -->
-	<nav
-		id="navbar"
-		class="bg-white transition-all delay-150 duration-300 shadow-md dark:bg-gray-800 dark:shadow-none"
-	>
+	<nav id="navbar" class="bg-white shadow-md dark:bg-gray-800 dark:shadow-none">
 		<div class="mx-auto px-2 py-2 sm:px-6 lg:px-8">
 			<div class="relative flex items-center justify-between h-16">
 				<!-- button hamburger -->
@@ -11,6 +8,7 @@
 					<button
 						type="button"
 						class="hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none rounded-lg text-sm p-2"
+						@click="searchMovie"
 					>
 						<img class="h-7 w-auto" :src="checkIconSearch()" alt="logo" />
 					</button>
@@ -76,6 +74,7 @@
 					<button
 						type="button"
 						class="hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none rounded-lg text-sm p-2"
+						@click="searchMovie"
 					>
 						<img class="h-7 w-auto" :src="checkIconSearch()" alt="logo" />
 					</button>
@@ -164,6 +163,32 @@ export default {
 		};
 
 		/* -------------------------------------------------------------------------- */
+		/*                                  computed                                  */
+		/* -------------------------------------------------------------------------- */
+		const compIsDarkMode = computed(() => {
+			// console.log(isDarkMode.value);
+			return isDarkMode.value;
+		});
+
+		/* -------------------------------------------------------------------------- */
+		/*                                  lifecycle                                 */
+		/* -------------------------------------------------------------------------- */
+		onMounted(() => {
+			cekColorThemeFromLocalStorage();
+
+			window.document.onscroll = () => {
+				let navbarFixed = document.getElementById("navbarFixed");
+				if (window.scrollY > 70) {
+					navbarFixed.classList.add("open");
+					navbarFixed.classList.remove("hidden");
+				} else {
+					navbarFixed.classList.add("hidden");
+					navbarFixed.classList.remove("open");
+				}
+			};
+		});
+
+		/* -------------------------------------------------------------------------- */
 		/*                                   method                                   */
 		/* -------------------------------------------------------------------------- */
 		const cekColorThemeFromLocalStorage = () => {
@@ -192,34 +217,16 @@ export default {
 			return compIsDarkMode.value ? IconSearch : IconSearchDark;
 		};
 
-		/* -------------------------------------------------------------------------- */
-		/*                                  lifecycle                                 */
-		/* -------------------------------------------------------------------------- */
-		onMounted(() => {
-			cekColorThemeFromLocalStorage();
-
-			window.document.onscroll = () => {
-				let navbarFixed = document.getElementById("navbarFixed");
-				if (window.scrollY > 70) {
-					navbarFixed.classList.add("open");
-					navbarFixed.classList.remove("hidden");
-				} else {
-					navbarFixed.classList.add("hidden");
-					navbarFixed.classList.remove("open");
-				}
-			};
-		});
+		const searchMovie = () => {
+			router.push("/search-movie");
+		};
 
 		/* -------------------------------------------------------------------------- */
-		/*                                  computed                                  */
+		/*                               return to page                               */
 		/* -------------------------------------------------------------------------- */
-		const compIsDarkMode = computed(() => {
-			// console.log(isDarkMode.value);
-			return isDarkMode.value;
-		});
-
 		return {
 			isDarkMode,
+			searchMovie,
 			backToHome,
 			checkIconClose,
 			checkIconMenu,

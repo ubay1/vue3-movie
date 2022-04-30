@@ -4,6 +4,8 @@ import { fileURLToPath, URL } from "url";
 import { defineConfig, loadEnv } from "vite";
 import vue from "@vitejs/plugin-vue";
 
+import WindiCSS from "vite-plugin-windicss";
+
 export default defineConfig(({ mode }) => {
 	const env = loadEnv(mode, process.cwd());
 
@@ -17,7 +19,7 @@ export default defineConfig(({ mode }) => {
 	};
 
 	return {
-		plugins: [vue()],
+		plugins: [vue(), WindiCSS()],
 		define: processEnvValues,
 		resolve: {
 			alias: {

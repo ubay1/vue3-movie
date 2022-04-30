@@ -65,6 +65,25 @@ export default (baseUrl, apiKey) => {
 			});
 		},
 
+		getMovieFromSearching: ({ language, page, query }) => {
+			const fetcher = createAxios();
+
+			return new Promise(async (resolve, reject) => {
+				try {
+					// setTimeout(async () => {
+					resolve(
+						await fetcher.get(
+							`/search/movie?api_key=${apiKey}&language=${language}&page=${page}&include_adult=false&query=${query}`
+						)
+					);
+					// },10000);
+				} catch (error) {
+					console.log(error);
+					reject(error);
+				}
+			});
+		},
+
 		getDetailMovie: ({ language, movieId }) => {
 			const fetcher = createAxios();
 

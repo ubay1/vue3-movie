@@ -7,8 +7,8 @@ import { createHead } from "@vueuse/head";
 import LazyImg from "@/utils/lazyImg.js";
 import LayoutDefault from "@/layouts/Default.vue";
 
+import "virtual:windi.css";
 import "./assets/global.css";
-import "./assets/tailwind.css";
 
 import en from "./locales/en";
 import id from "./locales/id";
